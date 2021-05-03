@@ -794,8 +794,8 @@ if ( ! class_exists( 'ATBDP_Extensions' ) ) {
             }
 
             // Get licencing data
-            $authentication = self::remote_authenticate_user( ['user' => $username, 'password' => $password] );
-            $response       = ( $authentication['success'] ) ? $authentication['response'] : [];
+            $authention = self::remote_authenticate_user( ['user' => $username, 'password' => $password] );
+            $response = $authention['response'];
 
             // Validate response
             if ( ! $response['success'] ) {
@@ -817,7 +817,7 @@ if ( ! class_exists( 'ATBDP_Extensions' ) ) {
                     ];
                 }
 
-                wp_send_json( ['status' => $status, 'response_body' => $response] );
+                wp_send_json( ['status' => $status, 'response' => $response] );
             }
 
             $previous_username = get_user_meta( get_current_user_id(), '_atbdp_subscribed_username', true );
@@ -901,7 +901,7 @@ if ( ! class_exists( 'ATBDP_Extensions' ) ) {
 
             // Get licencing data
             $authentication = self::remote_authenticate_user( ['user' => $username, 'password' => $password] );
-            $auth_response  = ( $authentication['success'] ) ? $authentication['response'] : [];
+            $auth_response  = $authentication['response'];
 
             // Validate response
             if ( ! $authentication['success'] ) {
