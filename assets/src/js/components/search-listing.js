@@ -224,6 +224,8 @@
 
 })(jQuery);
 
+const $ = jQuery;
+
 /* advanced search form reset */
 function adsFormReset() {
     let adsForm = document.querySelector(".directorist-search-form");
@@ -235,6 +237,9 @@ function adsFormReset() {
     if ( ! adsForm ) {
         adsForm = document.querySelector(".atbd_ads-form");
     }
+
+    jQuery('.select2-hidden-accessible').val(null).trigger('change');
+    resetPureSelect();
 
     adsForm.querySelectorAll("input[type='text']").forEach(function (el) {
         el.value = "";
@@ -264,8 +269,8 @@ if(document.querySelector(".directorist-search-form #atbdp_reset") !== null){
         atbd_callingSlider(0);
     });
 }
-if(document.querySelector(".directorist-advanced-filter__form #atbdp_reset") !== null){
-    document.querySelector(".directorist-advanced-filter__form #atbdp_reset").addEventListener("click", function (e) {
+if(document.querySelector(".directorist-advanced-filter #atbdp_reset") !== null){
+    document.querySelector(".directorist-advanced-filter #atbdp_reset").addEventListener("click", function (e) {
         e.preventDefault();
         adsFormReset();
         atbd_callingSlider(0);
@@ -277,4 +282,21 @@ if(document.querySelector("#bdlm-search-area #atbdp_reset") !== null){
         adsFormReset();
         atbd_callingSlider(0);
     })
+}
+
+function resetPureSelect( inp_selector ) {
+    const selector = ( inp_selector ) ? $(inp_selector) : $( '.directorist-select' );
+
+    $(selector).each( function( ind, elm ) {
+        let pure_select_container = $(elm).find( '.directorist-select__container' );
+        if ( ! pure_select_container.length ) return;
+        if ( ! $(elm).find( 'select' ).length ) return;
+
+        let select_inp = $(elm).find( 'select' )[0];
+        let placeholder = select_inp[0].innerHTML;
+        placeholder = placeholder + '<i class="la la-angle-down"></i>';
+
+        $(elm).find('.directorist-select__label').html( placeholder );
+        select_inp.selectedIndex = 0;
+    });
 }
