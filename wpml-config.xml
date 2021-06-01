@@ -1,0 +1,65 @@
+<wpml-config>
+    <custom-types>
+        <custom-type translate="1">at_biz_dir</custom-type>
+        <custom-type translate="1">atbdp_orders</custom-type>
+        <custom-type translate="1">listing-announcement</custom-type>
+    </custom-types>
+
+    <taxonomies>
+        <taxonomy translate="1">at_biz_dir-category</taxonomy>
+        <taxonomy translate="1">at_biz_dir-location</taxonomy>
+        <taxonomy translate="1">at_biz_dir-tags</taxonomy>
+        <taxonomy translate="1">atbdp_listing_types</taxonomy>
+    </taxonomies>
+
+    <shortcodes>
+        <shortcode>
+            <tag label="Directorist All Listing">directorist_all_listing</tag>
+        </shortcode>
+        <shortcode>
+            <tag label="Directorist Category">directorist_category</tag>
+        </shortcode>
+        <shortcode>
+            <tag label="Directorist Tag">directorist_tag</tag>
+        </shortcode>
+        <shortcode>
+            <tag label="Directorist Tag">directorist_location</tag>
+        </shortcode>
+        <shortcode>
+            <tag label="Directorist All Categories">directorist_all_categories</tag>
+        </shortcode>
+        <shortcode>
+            <tag label="Directorist All Locations">directorist_all_locations</tag>
+        </shortcode>
+        <shortcode>
+            <tag label="Directorist Search Listing">directorist_search_listing</tag>
+        </shortcode>
+        <shortcode>
+            <tag label="Directorist Search Result">directorist_search_result</tag>
+        </shortcode>
+        <shortcode>
+            <tag label="Directorist Author Profile">directorist_author_profile</tag>
+        </shortcode>
+        <shortcode>
+            <tag label="Directorist User Dashboard">directorist_user_dashboard</tag>
+        </shortcode>
+        <shortcode>
+            <tag label="Directorist Add Listing">directorist_add_listing</tag>
+        </shortcode>
+        <shortcode>
+            <tag label="Directorist User Registration">directorist_custom_registration</tag>
+        </shortcode>
+        <shortcode>
+            <tag label="Directorist User Login">directorist_user_login</tag>
+        </shortcode>
+        <shortcode>
+            <tag label="Directorist Checkout">directorist_checkout</tag>
+        </shortcode>
+        <shortcode>
+            <tag label="Directorist Payment Receipt">directorist_payment_receipt</tag>
+        </shortcode>
+        <shortcode>
+            <tag label="Directorist Transaction Failure">directorist_transaction_failure</tag>
+        </shortcode>
+    </shortcodes>
+</wpml-config>
