@@ -29,7 +29,7 @@ if ( ! class_exists('ATBDP_Settings_Panel') ) {
 				$fields['script_debugging'] = [
 					'type'  => 'toggle',
 					'label' => 'Script debugging',
-					'description' => __( 'Loads unminified .css, .js files', 'directorist' ),
+					'description' => __( 'Loads unminified .css and .js files', 'directorist' ),
 				];
 
 				$fields['import_settings'] = [
