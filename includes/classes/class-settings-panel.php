@@ -16,11 +16,42 @@ if ( ! class_exists('ATBDP_Settings_Panel') ) {
 		{
 			add_action( 'init', [$this, 'initial_setup'] );
 			add_action( 'init', [$this, 'prepare_settings'] );
-
+            
+			add_filter( 'atbdp_listing_type_settings_field_list', [ $this, 'receive_wpml_translation' ] );
+            
 			add_action( 'admin_menu', [$this, 'add_menu_pages'] );
-			add_action( 'wp_ajax_save_settings_data', [ $this, 'handle_save_settings_data_request' ] );
+
+            // Adding WPML Support
+			add_action( 'init', [$this, 'register_wpml_translation'] );
+			add_filter( 'wp_ajax_save_settings_data', [ $this, 'handle_save_settings_data_request' ] );
+
 			$this->extension_url = sprintf("<a target='_blank' href='%s'>%s</a>", esc_url(admin_url('edit.php?post_type=at_biz_dir&page=atbdp-extension')), __('Checkout Awesome Extensions', 'directorist'));
 		}
+
+        // register_wpml_translation
+        public function register_wpml_translation( $fields = [] ) {
+
+            if ( ! is_array( $fields ) ) return $fields;
+
+            foreach ( $fields as $field_args ) {
+                do_action( 'wpml_register_single_string', 'Directorist Settings Label', $field_args['label'], $field_args['label'] );
+                do_action( 'wpml_register_single_string', 'Directorist Settings Description', $field_args['description'], $field_args['description'] );
+            }
+
+        }
+
+        // add_wpml_translation_support
+        public function receive_wpml_translation( $fields = [] ) {  
+
+            if ( ! is_array( $fields ) ) return $fields;
+
+            foreach ( $fields as $field_key => $field_args ) {
+                $fields[ $field_key ][ 'label' ] = apply_filters( 'wpml_translate_single_string', $field_args['label'], 'directorist', $field_key );
+                $fields[ $field_key ][ 'description' ] = apply_filters( 'wpml_translate_single_string', $field_args['description'], 'directorist', $field_key );
+            }
+
+            return $fields;
+        }
 
 		// initial_setup
 		public function initial_setup() {
