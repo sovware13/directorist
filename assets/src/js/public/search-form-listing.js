@@ -153,6 +153,9 @@
 
                 var setupAutocomplete = function( field ) {
                     const input = document.getElementById( field.input_id );
+
+                    if ( ! input ) return;
+
                     const autocomplete = new google.maps.places.Autocomplete( input, field.options );
 
                     google.maps.event.addListener(autocomplete, 'place_changed', function () {
