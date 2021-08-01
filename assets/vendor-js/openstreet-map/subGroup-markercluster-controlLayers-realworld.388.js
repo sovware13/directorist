@@ -2,22 +2,26 @@ var atbdp_lat_lon = get_dom_data( 'atbdp_lat_lon' );
 var listings_data = get_dom_data( 'listings_data' );
 var atbdp_map     = get_dom_data( 'atbdp_map' );
 
+
+
 function get_dom_data ( key ) {
-    var dom_content = document.body.innerHTML;
 
-    if ( ! dom_content.length ) { return ''; }
+    let dataContainer = document.getElementById( 'directorist-dom-data-' + key );
 
-    var pattern = new RegExp("(<!-- directorist-dom-data::" + key + "\\s)(.+)(\\s-->)");
-    var terget_content = pattern.exec( dom_content );
+    if ( ! dataContainer ) {
+        return '';
+    }
 
-    if ( ! terget_content ) { return ''; }
-    if ( typeof terget_content[2] === 'undefined' ) { return ''; }
+    let dataContent = dataContainer.innerHTML;
+    let data = '';
+
+    try {
+        data = JSON.parse( dataContent );
+    } catch (e) {
+        console.log( e, { dataContainer, dataContent } );
+    }
     
-    var dom_data = JSON.parse( terget_content[2] );
-
-    if ( ! dom_data ) { return ''; }
-
-    return dom_data;
+    return data;
 }
 
 

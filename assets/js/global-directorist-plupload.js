@@ -538,30 +538,22 @@ function gd_set_image_meta(input_id, order_id) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "get_dom_data", function() { return get_dom_data; });
 function get_dom_data(key) {
-  var dom_content = document.body.innerHTML;
+  var dataContainer = document.getElementById("directorist-dom-data-".concat(key));
 
-  if (!dom_content.length) {
+  if (!dataContainer) {
     return '';
   }
 
-  var pattern = new RegExp("(<!-- directorist-dom-data::" + key + "\\s)(.+)(\\s-->)");
-  var terget_content = pattern.exec(dom_content);
+  var dataContent = dataContainer.innerText;
+  var data = '';
 
-  if (!terget_content) {
-    return '';
+  try {
+    data = JSON.parse(dataContent);
+  } catch (e) {
+    console.log(e);
   }
 
-  if (typeof terget_content[2] === 'undefined') {
-    return '';
-  }
-
-  var dom_data = JSON.parse(terget_content[2]);
-
-  if (!dom_data) {
-    return '';
-  }
-
-  return dom_data;
+  return data;
 }
 
 

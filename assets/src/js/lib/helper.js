@@ -1,19 +1,20 @@
 function get_dom_data ( key ) {
-    var dom_content = document.body.innerHTML;
+    let dataContainer = document.getElementById( `directorist-dom-data-${key}` );
 
-    if ( ! dom_content.length ) { return ''; }
+    if ( ! dataContainer ) {
+        return '';
+    }
 
-    var pattern = new RegExp("(<!-- directorist-dom-data::" + key + "\\s)(.+)(\\s-->)");
-    var terget_content = pattern.exec( dom_content );
+    let dataContent = dataContainer.innerText;
+    let data = '';
 
-    if ( ! terget_content ) { return ''; }
-    if ( typeof terget_content[2] === 'undefined' ) { return ''; }
-    
-    var dom_data = JSON.parse( terget_content[2] );
+    try {
+        data = JSON.parse( dataContent );
+    } catch (e) {
+        console.log( e );
+    }
 
-    if ( ! dom_data ) { return ''; }
-
-    return dom_data;
+    return data;
 }
 
 export { get_dom_data };

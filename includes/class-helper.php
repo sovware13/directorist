@@ -505,7 +505,7 @@ class Helper {
 
 		$value = json_encode( $data );
 		?>
-		<!-- directorist-dom-data::<?php echo $data_key; ?> <?php echo $value; ?> -->
+		<div style="display: none;" id="directorist-dom-data-<?php echo $data_key; ?>" class="directorist-dom-data"><?php echo $value; ?></div>
 		<?php
 	}
 
