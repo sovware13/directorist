@@ -657,7 +657,7 @@ final class Directorist_Base
 						$listing_img = get_post_meta($pop_post->ID, '_listing_img', true);
 						$listing_prv_img = get_post_meta($pop_post->ID, '_listing_prv_img', true);
 						$cats = get_the_terms($pop_post->ID, ATBDP_CATEGORY);
-						$post_link = ATBDP_Permalink::get_listing_permalink( $pop_post->ID );
+						$post_link = get_the_permalink( $pop_post->ID );
 						?>
 						<li>
 							<div class="atbd_left_img">
@@ -1399,7 +1399,7 @@ final class Directorist_Base
 								if ($guest_review && !atbdp_logged_in_user()){
 								?>
 								<div class="form-group">
-									<label for="guest_user"><?php
+									<label for="guest_user_email"><?php
 										$guest_email_label = get_directorist_option('guest_email', __('Your Email', 'directorist'));
 										$guest_email_placeholder = get_directorist_option('guest_email_placeholder', __('example@gmail.com', 'directorist'));
 										esc_html_e($guest_email_label . ':', 'directorist');
