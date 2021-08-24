@@ -2,6 +2,27 @@
 // Prohibit direct script loading.
 defined('ABSPATH') || die('No direct script access allowed!');
 
+if ( ! function_exists( 'directorist_is_plugin_active' ) ) {
+    function directorist_is_plugin_active( $plugin ) {
+        return in_array( $plugin, (array) get_option( 'active_plugins', array() ), true ) || directorist_is_plugin_active_for_network( $plugin );
+    }
+}
+
+if ( ! function_exists( 'directorist_is_plugin_active_for_network' ) ) {
+    function directorist_is_plugin_active_for_network( $plugin ) {
+        if ( ! is_multisite() ) {
+            return false;
+        }
+                
+        $plugins = get_site_option( 'active_sitewide_plugins' );
+        if ( isset( $plugins[ $plugin ] ) ) {
+                return true;
+        }
+
+        return false;
+    }
+}
+
 if ( ! function_exists( 'directorist_get_listings_directory_type' ) ) {
     function directorist_get_listings_directory_type( $listing_id = '' ) {
         $directory_type = wp_get_post_terms( $listing_id, ATBDP_DIRECTORY_TYPE );
