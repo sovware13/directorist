@@ -325,7 +325,14 @@ class Jwt_Auth_Public
      * @param $request
      */
     public function rest_pre_dispatch($request)
-    {
+    {   
+        $auth = isset($_SERVER['HTTP_AUTHORIZATION']) ? $_SERVER['HTTP_AUTHORIZATION'] : false;
+        list($token) = sscanf($auth, 'Basic %s');
+
+        if ( $token ) {
+            return $request;
+        }
+
         if (is_wp_error($this->jwt_error)) {
             return $this->jwt_error;
         }
