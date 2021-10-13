@@ -13,6 +13,7 @@ defined( 'ABSPATH' ) || exit;
 use WP_Error;
 use WP_Query;
 use WP_REST_Server;
+use Directorist\Helper;
 
 /**
  * Listings controller class.
@@ -33,13 +34,6 @@ class Listings_Controller extends Posts_Controller {
 	 */
 	protected $post_type = ATBDP_POST_TYPE;
 
-	// /**
-	//  * Initialize product actions.
-	//  */
-	// public function __construct() {
-	// 	add_action( "woocommerce_rest_insert_{$this->post_type}_object", array( $this, 'clear_transients' ) );
-	// }
-
 	/**
 	 * Register the routes for products.
 	 */
@@ -51,7 +45,7 @@ class Listings_Controller extends Posts_Controller {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_items' ),
-					// 'permission_callback' => array( $this, 'get_items_permissions_check' ),
+					'permission_callback' => array( $this, 'get_items_permissions_check' ),
 					'args'                => $this->get_collection_params(),
 				),
 				array(
@@ -77,7 +71,7 @@ class Listings_Controller extends Posts_Controller {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_item' ),
-					// 'permission_callback' => array( $this, 'get_item_permissions_check' ),
+					'permission_callback' => array( $this, 'get_item_permissions_check' ),
 					'args'                => array(
 						'context' => $this->get_context_param(
 							array(
@@ -136,7 +130,7 @@ class Listings_Controller extends Posts_Controller {
 		$response->header( 'X-WP-Total', $query_results['total'] );
 		$response->header( 'X-WP-TotalPages', (int) $max_pages );
 
-		$base = add_query_arg( $request->get_query_params(), rest_url( sprintf( '/%s/%s', $this->namespace, $base ) ) );
+		$base = add_query_arg( $request->get_query_params(), rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ) );
 
 		if ( $page > 1 ) {
 			$prev_page = $page - 1;
@@ -182,23 +176,27 @@ class Listings_Controller extends Posts_Controller {
 	 * @return array
 	 */
 	protected function prepare_objects_query( $request ) {
-		$args                        = array();
-		$args['offset']              = $request['offset'];
-		$args['order']               = $request['order'];
-		$args['orderby']             = $request['orderby'];
-		$args['paged']               = $request['page'];
-		$args['post__in']            = $request['include'];
-		$args['post__not_in']        = $request['exclude'];
-		$args['posts_per_page']      = $request['per_page'];
-		$args['name']                = $request['slug'];
-		$args['s']                   = $request['search'];
-		$args['fields']              = $this->get_fields_for_response( $request );
+		$args             		= [];
+		$args['offset']         = $request['offset'];
+		$args['order']          = $request['order'];
+		$args['orderby']        = $request['orderby'];
+		$args['paged']          = $request['page'];
+		$args['post__in']       = $request['include'];
+		$args['post__not_in']   = $request['exclude'];
+		$args['posts_per_page'] = $request['per_page'];
+		$args['name']           = $request['slug'];
+		$args['s']              = $request['search'];
+		$args['fields']         = $this->get_fields_for_response( $request );
 
-		if ( 'date' === $args['orderby'] ) {
-			$args['orderby'] = 'date ID';
-		}
+		$is_featured = ( isset( $request['featured'] ) && $request['featured'] );
 
-		$args['date_query'] = array();
+		// Taxonomy query.
+		$tax_query = [];
+		// Meta query.
+		$meta_query = [];
+		// Date query.
+		$args['date_query'] = [];
+
 		// Set before into date query. Date query must be specified as an array of an array.
 		if ( isset( $request['before'] ) ) {
 			$args['date_query'][0]['before'] = $request['before'];
@@ -216,8 +214,135 @@ class Listings_Controller extends Posts_Controller {
 			}
 		}
 
-		// Force the post_type argument, since it's not a user input variable.
-		$args['post_type'] = $this->post_type;
+		// Set author query.
+		if ( isset( $request['author'] ) ) {
+			$args['author'] = $request['author'];
+		}
+
+		// Set featured query.
+		if ( $is_featured ) {
+			$meta_query['_featured'] = [
+				'key'     => '_featured',
+				'value'   => 1,
+				'compare' => '=',
+			];
+		}
+
+		// Set directory type query.
+		if ( isset( $request['directory'] ) ) {
+			$meta_query['_directory_type'] = [
+				'key'     => '_directory_type',
+				'value'   => $request['directory'],
+				'compare' => '=',
+			];
+		}
+
+		// Set categories query.
+		if ( isset( $request['categories'] ) ) {
+			$tax_query['tax_query'][] = [
+				'taxonomy'         => ATBDP_CATEGORY,
+				'field'            => 'term_id',
+				'terms'            => $request['categories'],
+				'include_children' => true, /*@todo; Add option to include children or exclude it*/
+			];
+		}
+
+		// Set locations query.
+		if ( isset( $request['locations'] ) ) {
+			$tax_query['tax_query'][] = [
+				'taxonomy'         => ATBDP_LOCATION,
+				'field'            => 'term_id',
+				'terms'            => $request['locations'],
+				'include_children' => true, /*@todo; Add option to include children or exclude it*/
+			];
+		}
+
+		// Set locations query.
+		if ( isset( $request['tags'] ) ) {
+			$tax_query['tax_query'][] = [
+				'taxonomy'         => ATBDP_TAGS,
+				'field'            => 'term_id',
+				'terms'            => $request['tags'],
+				'include_children' => true, /*@todo; Add option to include children or exclude it*/
+			];
+		}
+
+		switch ( $args['orderby'] ) {
+			case 'id':
+				$args['orderby'] = 'ID';
+				break;
+
+			case 'include':
+				$args['orderby'] = 'post__in';
+				break;
+
+			case 'title':
+				if ( $is_featured ) {
+					$args['meta_key'] = '_featured';
+					$args['orderby']  = [
+						'meta_value_num' => 'DESC',
+						'title'          => $args['order'],
+					];
+				}
+				break;
+
+			case 'date':
+				if ( $is_featured ) {
+					$args['meta_key'] = '_featured';
+					$args['orderby']  = [
+						'meta_value_num' => 'DESC',
+						'date'           => $args['order'],
+					];
+				}
+				break;
+
+			case 'price':
+				if ( $is_featured ) {
+					$meta_query['price'] = [
+						'key'     => '_price',
+						'type'    => 'NUMERIC',
+						'compare' => 'EXISTS',
+					];
+
+					$args['orderby'] = [
+						'_featured' => 'DESC',
+						'price'     => $args['orderby'],
+					];
+				} else {
+					$args['meta_key'] = '_price';
+					$args['orderby']  = 'meta_value_num';
+					$args['order']    = $args['orderby'];
+				}
+				break;
+
+			case 'popular':
+				$meta_query['views'] = [
+					'key'     => '_atbdp_post_views_count',
+					'value'   => get_directorist_option( 'views_for_popular', 4 ),
+					'type'    => 'NUMERIC',
+					'compare' => '>=',
+				];
+
+				if ( $is_featured ) {
+					$args['orderby'] = [
+						'_featured' => $args['order'],
+						'views'     => $args['order'],
+					];
+				} else {
+					$args['orderby'] = [
+						'views' => $args['order'],
+					];
+				}
+		}
+
+		if ( ! empty( $meta_query ) ) {
+			$args['meta_query'] = $meta_query;
+		}
+
+		if ( ! empty( $tax_query ) ) {
+			$tax_query[]['relation'] = 'AND';
+			$args['tax_query']       = $tax_query;
+		}
 
 		/**
 		 * Filter the query arguments for a request.
@@ -229,6 +354,9 @@ class Listings_Controller extends Posts_Controller {
 		 * @param WP_REST_Request $request The request used.
 		 */
 		$args = apply_filters( "directorist_rest_{$this->post_type}_object_query", $args, $request );
+
+		// Force the post_type argument, since it's not a user input variable.
+		$args['post_type'] = $this->post_type;
 
 		return $this->prepare_items_query( $args, $request );
 	}
@@ -584,6 +712,12 @@ class Listings_Controller extends Posts_Controller {
 				case 'featured':
 					$base_data['featured'] = (bool) get_post_meta( $listing->ID, '_featured', true );
 					break;
+				case 'new':
+					$base_data['new'] = (bool) Helper::is_new( $listing->ID );
+					break;
+				case 'popular':
+					$base_data['popular'] = (bool) Helper::is_popular( $listing->ID );
+					break;
 				case 'status':
 					$base_data['status'] = $listing->post_status;
 					break;
@@ -869,6 +1003,20 @@ class Listings_Controller extends Posts_Controller {
 					'default'     => false,
 					'context'     => array( 'view', 'edit' ),
 				),
+				'new'              => array(
+					'description' => __( 'New listing.', 'directorist' ),
+					'type'        => 'boolean',
+					'default'     => false,
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
+				'popular'              => array(
+					'description' => __( 'Popular listing.', 'directorist' ),
+					'type'        => 'boolean',
+					'default'     => false,
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
 				'status'     => array(
 					'description' => __( 'Listing status.', 'directorist' ),
 					'type'        => 'string',
@@ -1128,7 +1276,7 @@ class Listings_Controller extends Posts_Controller {
 		);
 		$params['orderby'] = array(
 			'description'        => __( 'Sort collection by object attribute.', 'directorist' ),
-			// 'enum'               => array_keys( $this->get_orderby_possibles() ),
+			'enum'               => array_keys( $this->get_orderby_possibles() ),
 			'sanitize_callback'  => 'sanitize_key',
 			'type'               => 'string',
 			'validate_callback'  => 'rest_validate_request_arg',
@@ -1139,7 +1287,7 @@ class Listings_Controller extends Posts_Controller {
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 		$params['status'] = array(
-			'default'           => 'any',
+			'default'           => 'publish',
 			'description'       => __( 'Limit result set to listings assigned a specific status.', 'directorist' ),
 			'type'              => 'string',
 			'enum'              => array_merge( array( 'any', 'future', 'trash' ), array_keys( get_post_statuses() ) ),
@@ -1191,14 +1339,15 @@ class Listings_Controller extends Posts_Controller {
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 		$params['directory'] = array(
-			'description'       => __( 'Limit result set to listings assigned a specific directory.', 'directorist' ),
-			'type'              => 'string',
-			'sanitize_callback' => 'wp_parse_id_list',
+			'description'       => __( 'Limit result set to listings to sepecific directory type.', 'directorist' ),
+			'type'              => 'integar',
+			'sanitize_callback' => 'absint',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 		$params['author'] = array(
 			'description'       => __( 'Limit result set to listings specific to author ID.', 'directorist' ),
-			'type'              => 'string',
+			'type'              => 'integer',
+			'sanitize_callback' => 'absint',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
 
@@ -1207,11 +1356,13 @@ class Listings_Controller extends Posts_Controller {
 
 	protected function get_orderby_possibles() {
 		return array(
-			'id'              => 'ID',
-			'include'         => 'include',
-			'name'            => 'display_name',
-			'registered_date' => 'registered',
-			// 'listings_count'  => 'listings_count',
+			'id'      => 'ID',
+			'include' => 'include',
+			'title'   => 'title',
+			'date'    => 'date',
+			// 'rating'  => 'rating',
+			'popular' => 'popular',
+			'price'   => 'price',
 		);
 	}
 
