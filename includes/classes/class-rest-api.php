@@ -412,7 +412,7 @@ class ATBDP_Rest_API {
         // Validate Old Password
         if ( ! $has_valid_password ) {
             $status['success'] = false;
-            $status['errors']['invalid_old_password'] = __('Current Password is not valid', 'directorist');
+            $status['errors']['invalid_old_password'] = __('Current password is not valid', 'directorist');
             $status['message'] = $status['errors']['invalid_old_password'];
 
             return $status;
@@ -420,7 +420,7 @@ class ATBDP_Rest_API {
 
         // Validate New Password
         if ( empty( $request['new_password'] ) ) {
-            $status['errors']['password_required'] = __('New Password can\'t be empty', 'directorist');
+            $status['errors']['password_required'] = __('New password can\'t be empty', 'directorist');
             $status['message'] = $status['errors']['password_required'];
 
             return $status;
