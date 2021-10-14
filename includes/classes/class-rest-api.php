@@ -15,7 +15,26 @@ class ATBDP_Rest_API {
             'permission_callback' => '__return_true'
         ]);
 
-        // Send Email Link
+        // Toggle Favorite Listing
+        register_rest_route( 'directorist/dev', '/toggle-favorite-listing/', [
+            'methods' => 'POST',
+            'callback' => [ $this, 'toggle_favorite_listing' ],
+            'args' => [
+                'user_id' => [
+                  'validate_callback' => function($param, $request, $key) {
+                    return is_numeric( $param );
+                  }
+                ],
+                'listing_id' => [
+                  'validate_callback' => function($param, $request, $key) {
+                    return is_numeric( $param );
+                  }
+                ],
+            ],
+            'permission_callback' => '__return_true'
+        ]);
+
+        // Send Password Reset Link
         register_rest_route( 'directorist/dev', '/send-password-reset-link/', [
             'methods' => 'POST',
             'callback' => [ $this, 'send_password_reset_link' ],
@@ -60,7 +79,7 @@ class ATBDP_Rest_API {
             'args' => [
                 'user_id' => [
                   'validate_callback' => function($param, $request, $key) {
-                    return is_int( $param );
+                    return is_numeric( $param );
                   }
                 ],
                 'old_password' => [
@@ -144,6 +163,62 @@ class ATBDP_Rest_API {
         $status['success'] = true;
         $status['user_id'] = $user;
         $status['message'] = __( 'Registration successfull', 'directorist' );
+
+        return $status;
+    }
+
+    // toggle_favorite_listing
+    public function toggle_favorite_listing( WP_REST_Request $request ) {
+        $status = [
+            'success'      => false,
+            'message'      => '',
+            'errors'       => [],
+        ];
+
+        // Validate User
+        if ( empty( $request['user_id'] ) ) {
+            $status['success'] = false;
+            $status['errors']['user_id_required'] = __("User ID is required", 'directorist');
+            $status['message'] = $status['errors']['user_id_required'];
+
+            return $status;
+        }
+
+        // Validate Listing ID
+        if ( empty( $request['listing_id'] ) ) {
+            $status['success'] = false;
+            $status['errors']['listing_id_required'] = __("User ID is required", 'directorist');
+            $status['message'] = $status['errors']['listing_id_required'];
+
+            return $status;
+        }
+
+        $user = get_user_by( 'id', $request['user_id'] );
+        
+        // Validate User
+        if ( ! $user ) {
+            $status['success'] = false;
+            $status['errors']['invalid_user'] = __('User doesn\'t exists', 'directorist');
+            $status['message'] = $status['errors']['invalid_user'];
+
+            return $status;
+        }
+
+        $favorites = get_user_meta( $request['user_id'], 'atbdp_favourites', true );
+        $favorites = ( empty( $favorites ) ) ? [] : $favorites;
+
+        if ( ( $key = array_search( $request['listing_id'], $favorites ) ) !== false) {
+            unset( $favorites[$key] );
+            $status['message'] = __('The listing has been removed from favorite', 'directorist');
+        } else {
+            $favorites[] = $request['listing_id'];
+            $status['message'] = __('The listing has been added to favorite', 'directorist');
+        }
+
+        $favorites = ( ! empty( $favorites ) ) ? $favorites : null;
+
+        update_user_meta( $request['user_id'], 'atbdp_favourites', $favorites );
+        $status['success'] = true;
 
         return $status;
     }
