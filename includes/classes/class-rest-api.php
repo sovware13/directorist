@@ -48,6 +48,20 @@ class ATBDP_Rest_API {
             'permission_callback' => '__return_true'
         ]);
 
+        // Get Password Reset PIN
+        register_rest_route( 'directorist/dev', '/get-password-reset-pin/', [
+            'methods' => 'POST',
+            'callback' => [ $this, 'get_password_reset_pin' ],
+            'args' => [
+                'email' => [
+                  'validate_callback' => function($param, $request, $key) {
+                    return is_email( $param );
+                  }
+                ]
+            ],
+            'permission_callback' => '__return_true'
+        ]);
+
         // Send Email Link
         register_rest_route( 'directorist/dev', '/reset-user-password/', [
             'methods' => 'POST',
@@ -256,6 +270,33 @@ class ATBDP_Rest_API {
         $status['message'] = __('The Password reset code has been sent to your email', 'directorist');
 
         return $status;
+    }
+
+    // Send password reset PIN
+    public function get_password_reset_pin( WP_REST_Request $request ) {
+        $status = [
+            'success'      => false,
+            'message'      => '',
+            'errors'       => [],
+        ];
+
+        if ( empty( $request['email'] ) ) {
+            $status['success'] = false;
+            $status['errors']['email_required'] = __("Email is required", 'directorist');
+            $status['message'] = $status['errors']['email_required'];
+
+            return $status;
+        }
+
+        $email = $request['email'];
+        $transient_pin = get_transient( "directorist_reset_pin_$email" );
+        
+
+        $status['success'] = true;
+        $status['pin']     = $transient_pin;
+
+        return $status;
+
     }
 
     // Reset User Password
