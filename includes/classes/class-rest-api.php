@@ -34,10 +34,10 @@ class ATBDP_Rest_API {
             'permission_callback' => '__return_true'
         ]);
 
-        // Send Password Reset Link
-        register_rest_route( 'directorist/dev', '/send-password-reset-link/', [
+        // Send Password Reset PIN
+        register_rest_route( 'directorist/dev', '/send-password-reset-pin/', [
             'methods' => 'POST',
-            'callback' => [ $this, 'send_password_reset_link' ],
+            'callback' => [ $this, 'send_password_reset_pin' ],
             'args' => [
                 'email' => [
                   'validate_callback' => function($param, $request, $key) {
@@ -223,8 +223,8 @@ class ATBDP_Rest_API {
         return $status;
     }
 
-    // Send password reset link
-    public function send_password_reset_link( WP_REST_Request $request ) {
+    // Send password reset PIN
+    public function send_password_reset_pin( WP_REST_Request $request ) {
         $status = [
             'success'      => false,
             'message'      => '',
