@@ -264,10 +264,15 @@ class ATBDP_Rest_API {
             return $status;
         }
 
-        ATBDP()->email->send_password_reset_pin_email( $request['email'] );
+        $send_password_reset_pin_email = ATBDP()->email->send_password_reset_pin_email( $request['email'] );
 
-        $status['success'] = true;
-        $status['message'] = __('The Password reset code has been sent to your email', 'directorist');
+        if ( $send_password_reset_pin_email ) {
+            $status['success'] = true;
+            $status['message'] = __('The Password reset code has been sent to your email', 'directorist');
+        } else {
+            $status['success'] = false;
+            $status['message'] = __('Couldn\'t send the email, please try again.' , 'directorist');
+        }
 
         return $status;
     }
