@@ -48,6 +48,20 @@ class ATBDP_Rest_API {
             'permission_callback' => '__return_true'
         ]);
 
+        // Verify Password Reset PIN
+        register_rest_route( 'directorist/dev', '/verify-password-reset-pin/', [
+            'methods' => 'POST',
+            'callback' => [ $this, 'verify_password_reset_pin' ],
+            'args' => [
+                'email' => [
+                  'validate_callback' => function($param, $request, $key) {
+                    return is_email( $param );
+                  }
+                ],
+            ],
+            'permission_callback' => '__return_true'
+        ]);
+
         // Get Password Reset PIN
         register_rest_route( 'directorist/dev', '/get-password-reset-pin/', [
             'methods' => 'POST',
@@ -264,20 +278,66 @@ class ATBDP_Rest_API {
             return $status;
         }
 
-        $send_password_reset_pin_email = ATBDP()->email->send_password_reset_pin_email( $request['email'] );
+        ATBDP()->email->send_password_reset_pin_email( $request['email'] );
 
-        if ( $send_password_reset_pin_email ) {
-            $status['success'] = true;
-            $status['message'] = __('The Password reset code has been sent to your email', 'directorist');
-        } else {
-            $status['success'] = false;
-            $status['message'] = __('Couldn\'t send the email, please try again.' , 'directorist');
-        }
-
+        $status['success'] = true;
+        $status['message'] = __('The Password reset code has been sent to your email', 'directorist');
+        
         return $status;
     }
 
-    // Send password reset PIN
+    // Verify password reset PIN
+    public function verify_password_reset_pin( WP_REST_Request $request ) {
+        $status = [
+            'success'      => false,
+            'message'      => '',
+            'errors'       => [],
+        ];
+
+        if ( empty( $request['email'] ) ) {
+            $status['success'] = false;
+            $status['errors']['email_required'] = __("Email is required", 'directorist');
+            $status['message'] = $status['errors']['email_required'];
+
+            return $status;
+        }
+
+        if ( empty( $request['pin'] ) ) {
+            $status['success'] = false;
+            $status['errors']['pin_required'] = __("PIN is required", 'directorist');
+            $status['message'] = $status['errors']['pin_required'];
+
+            return $status;
+        }
+
+        $email = $request['email'];
+        $transient_pin = get_transient( "directorist_reset_pin_$email" );
+
+        if ( empty( $transient_pin ) ) {
+            $status['success'] = false;
+            $status['errors']['pin_is_expired'] = __("PIN is expired", 'directorist');
+            $status['message'] = $status['errors']['pin_is_expired'];
+
+            return $status;
+        }
+
+        if ( $transient_pin != $request['pin'] ) {
+            $status['success'] = false;
+            $status['errors']['invalid_pin'] = __("PIN is invalid", 'directorist');
+            $status['message'] = $status['errors']['invalid_pin'];
+
+            return $status;
+        }
+        
+
+        $status['success'] = true;
+        $status['message'] = __("PIN is valid", 'directorist');
+
+        return $status;
+
+    }
+
+    // Get password reset PIN
     public function get_password_reset_pin( WP_REST_Request $request ) {
         $status = [
             'success'      => false,
