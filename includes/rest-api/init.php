@@ -22,6 +22,12 @@ function register_controllers() {
 	$listings = new \Directorist\Rest_Api\Controllers\Version1\Listings_Controller();
 	$listings->register_routes();
 
+	// Listings actions
+	require_once $dir . 'Version1/class-listings-actions-controller.php';
+
+	$listings_actions = new \Directorist\Rest_Api\Controllers\Version1\Listings_Actions_Controller();
+	$listings_actions->register_routes();
+
 	// Taxonomies controllers.
 	require_once $dir . 'Version1/class-abstract-terms-controller.php';
 	require_once $dir . 'Version1/class-categories-controller.php';
@@ -42,6 +48,12 @@ function register_controllers() {
 
 	$users = new \Directorist\Rest_Api\Controllers\Version1\Users_Controller();
 	$users->register_routes();
+
+	// Users favorites controller.
+	require_once $dir . 'Version1/class-users-favorites-controller.php';
+
+	$user_favorites = new \Directorist\Rest_Api\Controllers\Version1\User_Favorites_Controller();
+	$user_favorites->register_routes();
 
 	// Directory types
 	require_once $dir . 'Version1/class-directories-controller.php';
