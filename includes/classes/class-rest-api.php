@@ -225,7 +225,7 @@ class ATBDP_Rest_API {
             unset( $favorites[$key] );
             $status['message'] = __('The listing has been removed from favorite', 'directorist');
         } else {
-            $favorites[] = $request['listing_id'];
+            array_push( $favorites, $request['listing_id'] );
             $status['message'] = __('The listing has been added to favorite', 'directorist');
         }
 
