@@ -159,7 +159,7 @@ class ATBDP_Rest_API {
             ];
         }
 
-        if ( ! empty( $form_data['user_pass'] ) && strlen( $form_data['user_pass'] ) < 5 ) {
+        if ( ! empty( $form_data['user_pass'] ) && strlen( $form_data['user_pass'] ) < 6 ) {
             $status['errors']['password_min_length_error'] = [
                 __('Password must be 5 chaercters', 'directorist')
             ];
@@ -418,20 +418,21 @@ class ATBDP_Rest_API {
             return $status;
         }
 
-        if ( ! empty( $request['password'] ) && strlen( $request['password'] ) < 5 ) {
-            $status['errors']['password_min_length_error'] = __('Password must be 5 chaercters', 'directorist');
+        if ( ! empty( $request['password'] ) && strlen( $request['password'] ) < 6 ) {
+            $status['errors']['password_min_length_error'] = __('Password must be 6 chaercters', 'directorist');
             $status['message'] = $status['errors']['password_min_length_error'];
 
             return $status;
         }
         
         // Change Password
-        wp_set_password( $request['new_password'], $user->ID );
+        wp_set_password( $request['password'], $user->ID );
 
         // Delete The PIN
         delete_transient( "directorist_reset_pin_$email" );
 
         $status['success'] = true;
+        $status['userID']  = $user->ID;
         $status['message'] = __('Password has been changed successfully', 'directorist');
 
         return $status;
@@ -486,8 +487,8 @@ class ATBDP_Rest_API {
             return $status;
         }
 
-        if ( ! empty( $request['new_password'] ) && strlen( $request['new_password'] ) < 5 ) {
-            $status['errors']['password_min_length_error'] = __('Password must be 5 chaercters', 'directorist');
+        if ( ! empty( $request['new_password'] ) && strlen( $request['new_password'] ) < 6 ) {
+            $status['errors']['password_min_length_error'] = __('Password must be 6 chaercters', 'directorist');
             $status['message'] = $status['errors']['password_min_length_error'];
 
             return $status;
