@@ -446,15 +446,15 @@ class ATBDP_Rest_API {
             'errors'       => [],
         ];
 
-        if ( empty( $request['username'] ) ) {
+        if ( empty( $request['user_id'] ) ) {
             $status['success'] = false;
-            $status['errors']['invalid_user'] = __("Username is required", 'directorist');
+            $status['errors']['invalid_user'] = __("User ID is required", 'directorist');
             $status['message'] = $status['errors']['invalid_user'];
 
             return $status;
         }
 
-        $user               = get_user_by( 'login', $request['username'] );
+        $user               = get_user_by( 'id', $request['user_id'] );
         $has_valid_password = ( wp_check_password( $request['old_password'], $user->data->user_pass, $user->ID ) ) ? true : false;
         $is_valid_user      = ( $user && $has_valid_password ) ? true : false;
         
