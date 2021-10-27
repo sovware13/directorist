@@ -10,6 +10,7 @@ module.exports = {
 
         ['public-atmodal']: ["./assets/src/js/public/atmodal.js"],
         ['public-releated-listings-slider']: ["./assets/src/js/public/releated-listings-slider.js"],
+        ['public-push-notification']: ["./assets/src/js/public/push-notification.js"],
 
         // Admin
         // -------------------------------------------

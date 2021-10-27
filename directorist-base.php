@@ -480,6 +480,7 @@ final class Directorist_Base
 		load_dependencies('all', ATBDP_INC_DIR . 'hooks/');
 		load_dependencies('all', ATBDP_INC_DIR . 'modules/');
 		load_dependencies('all', ATBDP_INC_DIR . 'modules/multi-directory-setup/');
+		load_dependencies('all', ATBDP_INC_DIR . 'modules/push-notification/');
 
 		load_dependencies('all', ATBDP_CLASS_DIR); // load all php files from ATBDP_CLASS_DIR
 
