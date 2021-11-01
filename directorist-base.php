@@ -1398,12 +1398,12 @@ final class Directorist_Base
 		$client->insights()->init();
 	}
 
-	// load_dependency
-	public function load_dependency() {
-		if (  ! directorist_is_plugin_active( 'jwt-authentication-for-wp-rest-api/jwt-auth.php' ) ) {
-			self::require_files([ ATBDP_INC_DIR . 'modules/jwt-authentication/jwt-auth' ]);
-		}
-	}
+	// // load_dependency
+	// public function load_dependency() {
+	// 	if (  ! directorist_is_plugin_active( 'jwt-authentication-for-wp-rest-api/jwt-auth.php' ) ) {
+	// 		self::require_files([ ATBDP_INC_DIR . 'modules/jwt-authentication/jwt-auth' ]);
+	// 	}
+	// }
 
 } // ends Directorist_Base
 
