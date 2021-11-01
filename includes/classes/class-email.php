@@ -37,19 +37,19 @@ if (!class_exists('ATBDP_Email')):
             /*Fire up email for deleted/trashed listings*/
             add_action('atbdp_deleted_expired_listings', array($this, 'notify_owner_listing_deleted'));
             add_action('atbdp_deleted_expired_listings', array($this, 'notify_admin_listing_deleted'));
-            add_filter('wp_mail_from_name', array($this, 'atbdp_wp_mail_from_name'));	
+            add_filter('wp_mail_from_name', array($this, 'atbdp_wp_mail_from_name'));
             /*Fire up emails when a general user apply for become author user*/
             add_action('atbdp_become_author', array($this, 'notify_admin_become_author'));
             //add_action('atbdp_become_author', array($this, 'notify_owner_become_author'));
         }
 
-          /**	
-         * @since 5.8	
-         */	
-        public function atbdp_wp_mail_from_name()	
-        {	
-            $site_name = get_option('blogname');	
-            return $site_name;	
+          /**
+         * @since 5.8
+         */
+        public function atbdp_wp_mail_from_name()
+        {
+            $site_name = get_option('blogname');
+            return $site_name;
         }
 
         /**
@@ -488,7 +488,7 @@ This email is sent automatically for information purpose only. Please do not res
             $body = $this->replace_in_content(get_directorist_option("email_tmpl_new_listing"), null, $listing_id, $user);
             $body = atbdp_email_html($sub, $body);
             return $this->send_mail($user->user_email, $sub, $body, $this->get_email_headers());
-        } 
+        }
 
 
         /**
@@ -776,11 +776,11 @@ This email is sent automatically for information purpose only. Please do not res
          * @return bool Whether the email was sent successfully or not.
          */
         public function send_password_reset_pin_email($listing_email)
-        {   
+        {
             $s = __('[==SITE_NAME==] Password Reset PIN', 'directorist');
             $sub = str_replace('==SITE_NAME==', get_option('blogname'), $s);
             $pin = random_int(1000, 9999);
-            
+
             $min = 15;
             $expiration = 60 * $min; // In seconds
 
@@ -789,7 +789,6 @@ This email is sent automatically for information purpose only. Please do not res
             $body    = $this->get_password_reset_pin_email_template();
             $message = $this->replace_in_content($body, $order_id = 0, $listing_id = 0, $user = null, $renewal = null, $pin);
             $body    = atbdp_email_html($sub, $message);
-            
             return $this->send_mail( $listing_email, $sub, $body, $this->get_email_headers());
 
         }

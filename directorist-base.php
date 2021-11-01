@@ -9,23 +9,7 @@
  * Text Domain: directorist
  * Domain Path: /languages
  */
-/*
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-
-Copyright (c) 2020 wpWax (website: wpwax.com). All rights reserved.
-*/
 // prevent direct access to the file
 defined('ABSPATH') || die('No direct script access allowed!');
 
@@ -260,7 +244,7 @@ final class Directorist_Base
 
 			/*Extensions Link*/
 			/*initiate extensions link*/
-			
+
 			if( is_admin() ){
 				new ATBDP_Extensions();
 			}
@@ -1412,6 +1396,13 @@ final class Directorist_Base
 
 		// Active insights
 		$client->insights()->init();
+	}
+
+	// load_dependency
+	public function load_dependency() {
+		if (  ! directorist_is_plugin_active( 'jwt-authentication-for-wp-rest-api/jwt-auth.php' ) ) {
+			self::require_files([ ATBDP_INC_DIR . 'modules/jwt-authentication/jwt-auth' ]);
+		}
 	}
 
 } // ends Directorist_Base

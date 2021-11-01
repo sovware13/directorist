@@ -309,3 +309,50 @@ function directorist_get_object_terms( $object_id, $taxonomy, $field = null, $in
 
 	return is_null( $field ) ? $terms : wp_list_pluck( $terms, $field, $index_key );
 }
+
+/**
+ * Check listings reviews permissions on REST API.
+ *
+ * Copied from wc_rest_check_product_reviews_permissions
+ *
+ * @param string $context   Request context.
+ * @param string $object_id Object ID.
+ * @return bool
+ */
+function directorist_rest_check_listing_reviews_permissions( $context = 'read', $object_id = 0 ) {
+	$permission = false;
+	$contexts   = array(
+		'read'   => 'moderate_comments',
+		'create' => 'moderate_comments',
+		'edit'   => 'moderate_comments',
+		'delete' => 'moderate_comments',
+		'batch'  => 'moderate_comments',
+	);
+
+	if ( isset( $contexts[ $context ] ) ) {
+		$permission = current_user_can( $contexts[ $context ] );
+	}
+
+	return apply_filters( 'directorist_rest_check_permissions', $permission, $context, $object_id, 'listing_review' );
+}
+
+/**
+ * Check permissions of users favorite on REST API.
+ *
+ * @param string $context   Request context.
+ * @param int    $object_id Post ID.
+ * @return bool
+ */
+function directorist_rest_check_user_favorite_permissions( $context = 'read', $object_id = 0 ) {
+	$contexts = array(
+		'read'   => 'read',
+		'create' => 'read',
+		'edit'   => 'read',
+		'delete' => 'read',
+		'batch'  => 'read',
+	);
+
+	$permission = current_user_can( $contexts[ $context ], $object_id );
+
+	return apply_filters( 'directorist_rest_check_permissions', $permission, $context, $object_id, 'user_favorite' );
+}
