@@ -43,6 +43,9 @@
 @import "./../../component/all-authors";
 @import "./../../component/select2-custom-control";
 
+// Lib
+@import "./../../lib/lazy-checks";
+
 
 // Modules
 @import "../../module/listings";
@@ -305,7 +308,7 @@
   .atbd_content_active #directorist.atbd_wrapper.dashboard_area .atbd_saved_items_wrapper .atbd_single_saved_item {
     border: 0 none;
     padding: 0;
-    
+
   }
 
   .atbd_content_active #directorist.atbd_wrapper .atbdp_column {

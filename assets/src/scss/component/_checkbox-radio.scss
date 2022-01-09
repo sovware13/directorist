@@ -4,7 +4,8 @@
 .directorist-radio{
     display: flex;
     align-items: center;
-  
+    margin: 5px;
+
     input[type="checkbox"],
     input[type="radio"]{
         display: none;

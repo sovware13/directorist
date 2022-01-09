@@ -3,6 +3,7 @@ defined('ABSPATH') || die('Direct access is not allowed.');
 
 use \Directorist\Helper;
 use \Directorist\Directorist_All_Authors;
+use Directorist\Directorist_Listing_Search_Form;
 
 if (!class_exists('ATBDP_Ajax_Handler')) :
 
@@ -110,7 +111,26 @@ if (!class_exists('ATBDP_Ajax_Handler')) :
             //author paginate
             add_action('wp_ajax_directorist_author_pagination', array($this, 'author_pagination'));
             add_action('wp_ajax_nopriv_directorist_author_pagination', array($this, 'author_pagination'));
+
+			add_action('wp_ajax_directorist_get_tags', array($this, 'directorist_get_tags'));
+			add_action('wp_ajax_nopriv_directorist_get_tags', array($this, 'directorist_get_tags'));
         }
+
+		public function directorist_get_tags() {
+			$page       = ( isset( $_GET['page'] ) ) ? $_GET['page'] : 1;
+			$per_page   = ( isset( $_GET['per_page'] ) ) ? $_GET['per_page'] : 4;
+			$offset     = ( isset( $_GET['offset'] ) ) ? $_GET['offset'] : null;
+			$tag_source = ( isset( $_GET['tag_source'] ) ) ? $_GET['tag_source'] : 'all_tags';
+
+			$query_args = [];
+			$query_args['page'] = $page;
+			$query_args['per_page'] = $per_page;
+			$query_args['offset'] = $offset;
+
+			$result = Directorist_Listing_Search_Form::listing_tag_terms( $tag_source, $query_args );
+
+			wp_send_json( $result );
+		}
 
         // directorist_quick_ajax_login
         public function directorist_quick_ajax_login() {

@@ -235,7 +235,6 @@
 
     /* advanced search form reset */
     function adsFormReset(searchForm) {
-
         searchForm.querySelectorAll("input[type='text']").forEach(function (el) {
             el.value = "";
         });

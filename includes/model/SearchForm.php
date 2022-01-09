@@ -602,18 +602,23 @@ class Directorist_Listing_Search_Form {
 		return $rating_options;
 	}
 
-	public function listing_tag_terms($tag_source='all_tags') {
+	public static function listing_tag_terms( $tag_source = 'all_tags', $query_args = [] ) {
 		$category_slug   = get_query_var( 'atbdp_category' );
 		$category        = get_term_by( 'slug', $category_slug, ATBDP_CATEGORY );
 		$category_id     = ! empty( $category->term_id ) ? $category->term_id : '';
 		$category_select = ! empty( $_REQUEST['in_cat'] ) ? $_REQUEST['in_cat'] : $category_id;
+		$page            = ( isset( $query_args['page'] ) && is_numeric( $query_args['page'] ) ) ? ( int ) $query_args['page'] : 1;
+		$per_page        = ( isset( $query_args['per_page'] ) && is_numeric( $query_args['per_page'] ) ) ? ( int ) $query_args['per_page'] : 4;
+		$offset          = ( isset( $query_args['offset'] ) && is_numeric( $query_args['offset'] ) ) ? ( int ) $query_args['offset'] : ( ( $per_page * $page ) - $per_page );
 
 		if ( 'all_tags' == $tag_source || empty( $category_select ) ) {
-			$terms = get_terms( ATBDP_TAGS );
+			$terms = get_terms( ATBDP_TAGS, [ 'number' => $per_page, 'offset' => $offset ] );
 		} else {
 			$tag_args = array(
-				'post_type' => ATBDP_POST_TYPE,
-				'tax_query' => array(
+				'post_type'      => ATBDP_POST_TYPE,
+				'posts_per_page' => $per_page,
+				'page'           => $page,
+				'tax_query'      => array(
 					array(
 						'taxonomy' => ATBDP_CATEGORY,
 						'terms'    => ! empty( $_REQUEST['in_cat'] ) ? $_REQUEST['in_cat'] : $category_id,
