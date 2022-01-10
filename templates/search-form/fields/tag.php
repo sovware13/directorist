@@ -6,14 +6,6 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
-
-// $source     = !empty( $data['tags_filter_source'] ) ? $data['tags_filter_source'] : '';
-// $tag_source = ( $source == 'category_based_tags' ) ? 'cat_based' : 'all_tags';
-// $tag_terms  = $searchform->listing_tag_terms( $tag_source );
-
-// if ( !$tag_terms ) {
-// 	return;
-// }
 ?>
 
 <div class="directorist-search-field directorist-lazy-checks directorist-tags-lazy-checks">
@@ -23,5 +15,3 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 	<div class="directorist-search-tags directorist-flex directorist-lazy-check-items"></div>
 </div>
-
-<!-- directorist-btn-ml -->

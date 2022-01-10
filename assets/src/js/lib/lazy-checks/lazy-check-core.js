@@ -1,5 +1,5 @@
-import httpHelpers from "../../helpers/http-helpers";
-import utility from "./utility";
+import httpHelpers from '../../helpers/http-helpers';
+import utility from './utility';
 
 const lazyCheckCore = {
   args: {},
@@ -9,26 +9,42 @@ const lazyCheckCore = {
 
     // Validate AJAX argument
     // --------------------------
-    if ( args.ajax && ! Array.isArray(args.ajax) && typeof args.ajax === "object" ) {
+    if ( args.ajax && ! Array.isArray(args.ajax) && typeof args.ajax === 'object' ) {
       args.ajax = { ...defaultArgs.ajax, ...args.ajax };
     } else {
       args.ajax = defaultArgs.ajax;
     }
 
-    if ( typeof args.ajax.data !== "function" ) {
+    if ( typeof args.ajax.maxInitItems !== 'number' ) {
+      args.ajax.maxInitItems = parseInt( defaultArgs.ajax.maxInitItems );
+    }
+
+    if ( args.ajax.maxInitItems < 1 ) {
+      args.ajax.maxInitItems = 1;
+    }
+
+    if ( typeof args.ajax.getPreselectedItemsID !== 'function' ) {
+      args.ajax.getPreselectedItemsID = defaultArgs.ajax.getPreselectedItemsID;
+    }
+
+    if ( typeof args.ajax.data !== 'function' ) {
       args.ajax.data = defaultArgs.ajax.data;
     }
 
-    if ( typeof args.ajax.processResults !== "function" ) {
+    if ( typeof args.ajax.processResults !== 'function' ) {
       args.ajax.processResults = defaultArgs.ajax.processResults;
     }
 
-    if ( typeof args.ajax.template !== "function" ) {
+    if ( typeof args.ajax.template !== 'function' ) {
       args.ajax.template = defaultArgs.ajax.template;
     }
 
     if ( typeof args.ajax.loadingIndicator !== 'string' ) {
       args.ajax.loadingIndicator = defaultArgs.ajax.loadingIndicator;
+    }
+
+    if ( typeof args.ajax.loadMoreText !== 'string' ) {
+      args.ajax.loadMoreText = defaultArgs.ajax.loadMoreText;
     }
 
     return args;
@@ -39,10 +55,10 @@ const lazyCheckCore = {
 
     // Attach ID to root element
     const id = utility.generateRandom(100, 999);
-    rootContainer.setAttribute("data-lazy-check-root-element-id", id);
+    rootContainer.setAttribute('data-lazy-check-root-element-id', id);
 
     // Attach current page number to root element
-    rootContainer.setAttribute("data-lazy-check-current-page", 0);
+    rootContainer.setAttribute('data-lazy-check-current-page', 0);
 
     // Prepare Root Element
     this.prepareRootElement(id);
@@ -51,114 +67,137 @@ const lazyCheckCore = {
     this.addLoadingIndicatorToRootContainer( rootContainer );
 
     // Load initial data
-    const initData = await this.fetchData(id);
+    const initData = await this.fetchData({ id });
 
     // Remove Loading Indicator From Root Container
     this.removeLoadingIndicatorFromRootContainer( rootContainer );
 
     // Insert items to the DOM
-    if ( initData.success && initData.data.items.length ) {
-      let itemsContainer = rootContainer.querySelector( '.directorist-lazy-check-items' );
-
-      initData.data.template.map(item => {
-        itemsContainer.innerHTML += item;
-      });
-    }
-
-    // Get items container
-    let itemsContainer = rootContainer.querySelector(
-      ".directorist-lazy-check-items"
-    );
-
-    // Get init items
-    const initialItems = itemsContainer.querySelectorAll(
-      ".directorist-lazy-check-item-wrap"
-    );
-
-    // Set max item limit to root element
-    rootContainer.setAttribute(
-      "data-lazy-check-max-init-item-length",
-      initialItems.length
-    );
-
-    // Add identifier to init items
-    if (initialItems.length) {
-      for (const item of initialItems) {
-        item.classList.add("init-item");
-      }
+    if ( initData.success ) {
+      this.insertInitItemsToDOM({ rootContainer, items: initData.data.template });
     }
 
     // Enable Toggle
     const toggle = rootContainer.querySelector(
-      ".directorist-lazy-check-toggle-show-more"
+      '.directorist-lazy-check-toggle-show-more'
     );
 
     if (toggle) {
-      toggle.addEventListener("click", event =>
-        this.toogleModal(event, rootContainer)
+      toggle.addEventListener('click', event =>
+        this.toggleModal(event, rootContainer)
       );
     }
+  },
+
+  insertInitItemsToDOM: function({ rootContainer, items }) {
+    if ( ! items.length ) {
+      return;
+    }
+
+    const maxInitItems = this.args.ajax.maxInitItems;
+    const rootItems    = items.slice( 0, maxInitItems );
+    const modalItems   = items.slice( maxInitItems );
+
+    if ( rootItems.length ) {
+      let itemsContainer = rootContainer.querySelector( '.directorist-lazy-check-items' );
+
+      rootItems.map(item => {
+        let itemElementWrap = document.createElement('div');
+        itemElementWrap.innerHTML = item;
+
+        const itemElement = itemElementWrap.querySelector( '.directorist-lazy-check-item-wrap' );
+        itemElement.classList.add('init-item');
+
+        if ( itemElement ) {
+          itemsContainer.appendChild( itemElement );
+        }
+      });
+    }
+
+    const id = rootContainer.getAttribute('data-lazy-check-root-element-id');
+    let modalContainer = document.querySelector(
+      `[data-lazy-check-modal-id='${id}']`
+    );
+
+    if ( ! modalContainer ) {
+      modalContainer = this.insertModal( id );
+    }
+
+    let itemsContainer = modalContainer.querySelector( '.lazy-check-modal-fields' );
+
+    modalItems.map(item => {
+      let itemElementWrap = document.createElement('div');
+      itemElementWrap.innerHTML = item;
+
+      const itemElement = itemElementWrap.querySelector( '.directorist-lazy-check-item-wrap' );
+
+      if ( itemElement ) {
+        const migratedItemElement = this.migrateInputIDsForModal( itemElement );
+        itemsContainer.appendChild( migratedItemElement );
+      }
+    });
+
   },
 
   prepareRootElement: function(id) {
     const rootContainer = this.getRootContainerByID(id);
 
     let itemsContainer = rootContainer.querySelector(
-      ".directorist-lazy-check-items"
+      '.directorist-lazy-check-items'
     );
 
     if (!itemsContainer) {
-      itemsContainer = document.createElement("div");
-      itemsContainer.classList = "directorist-lazy-check-items";
+      itemsContainer = document.createElement('div');
+      itemsContainer.classList = 'directorist-lazy-check-items';
 
       rootContainer.append(itemsContainer);
     }
 
     // Add Show More Area
     let showMoreArea = rootContainer.querySelector(
-      ".directorist-lazy-check-show-more-area"
+      '.directorist-lazy-check-show-more-area'
     );
 
     if ( ! showMoreArea ) {
-      showMoreArea = document.createElement("div");
-      showMoreArea.classList = "directorist-lazy-check-show-more-area";
+      showMoreArea = document.createElement('div');
+      showMoreArea.classList = 'directorist-lazy-check-show-more-area';
 
       utility.insertAfter(itemsContainer, showMoreArea);
     }
 
-    showMoreArea.innerHTML = "";
+    showMoreArea.innerHTML = '';
 
     // Add Feedback Area
     let feedbackArea = rootContainer.querySelector(
-      ".lazy-check-feedback"
+      '.lazy-check-feedback'
     );
 
     if ( ! feedbackArea ) {
-      feedbackArea = document.createElement("div");
-      feedbackArea.classList = "lazy-check-feedback";
+      feedbackArea = document.createElement('div');
+      feedbackArea.classList = 'lazy-check-feedback';
 
       itemsContainer.parentNode.insertBefore( feedbackArea, showMoreArea );
     }
 
-    feedbackArea.innerHTML = "";
+    feedbackArea.innerHTML = '';
 
     // Insert Toggle Link
-    const toggleLink = document.createElement("a");
-    toggleLink.setAttribute("href", "#");
+    const toggleLink = document.createElement('a');
+    toggleLink.setAttribute('href', '#');
     toggleLink.classList = `directorist-lazy-check-toggle-show-more ${this.args.showMoreToggleClass}`;
     toggleLink.innerHTML = this.args.showMorelabel;
 
     showMoreArea.append(toggleLink);
   },
 
-  toogleModal: function(event, rootContainer) {
+  toggleModal: function(event, rootContainer) {
     event.preventDefault();
-    const id = rootContainer.getAttribute("data-lazy-check-root-element-id");
+    const id = rootContainer.getAttribute('data-lazy-check-root-element-id');
     let modalContainer = document.querySelector(
       `[data-lazy-check-modal-id='${id}']`
     );
 
-    if (!modalContainer) {
+    if ( ! modalContainer ) {
       modalContainer = this.insertModal(id);
     } else {
       this.updateModal(id);
@@ -166,40 +205,38 @@ const lazyCheckCore = {
 
     const hasNextPage = this.hasNextPage( rootContainer );
 
-    // this.addLoadMoreButtonToModal( modalContainer );
-
     if ( hasNextPage ) {
       this.addLoadMoreButtonToModal( modalContainer );
     } else {
       this.removeLoadMoreButtonFromModal( modalContainer );
     }
 
-    utility.toggleClass(document.querySelector("body"), "lazy-check-no-scroll");
-    utility.toggleClass(modalContainer, "show");
+    utility.toggleClass(document.querySelector('body'), 'lazy-check-no-scroll');
+    utility.toggleClass(modalContainer, 'show');
   },
 
   migrateInputIDs: function({ field, idConverter }) {
     const clonedField = field.cloneNode(true);
 
     // Input Fields
-    const inputFields = clonedField.getElementsByTagName("input");
+    const inputFields = clonedField.getElementsByTagName('input');
     if (inputFields.length) {
       for (const fieldItem of inputFields) {
-        let oldID = fieldItem.getAttribute("id");
+        let oldID = fieldItem.getAttribute('id');
         let newID = idConverter(oldID);
 
-        fieldItem.setAttribute("id", newID);
+        fieldItem.setAttribute('id', newID);
       }
     }
 
     // Labels
-    const labels = clonedField.getElementsByTagName("label");
+    const labels = clonedField.getElementsByTagName('label');
     if (labels.length) {
       for (const label of labels) {
-        let oldID = label.getAttribute("for");
+        let oldID = label.getAttribute('for');
         let newID = idConverter(oldID);
 
-        label.setAttribute("for", newID);
+        label.setAttribute('for', newID);
       }
     }
 
@@ -207,24 +244,26 @@ const lazyCheckCore = {
   },
 
   migrateInputIDsForModal: function(field) {
-    const idConverter = oldID => "modal-id-" + oldID;
+    const idConverter = oldID => 'modal-id-' + oldID;
     return this.migrateInputIDs({ field, idConverter });
   },
 
   migrateInputIDsForRootElement: function(field) {
-    const idConverter = oldID => oldID.replace("modal-id-", "");
+    const idConverter = oldID => oldID.replace('modal-id-', '');
     return this.migrateInputIDs({ field, idConverter });
   },
 
   closeModel: function({ modalContainer }) {
-    utility.toggleClass(modalContainer, "show");
-    utility.toggleClass(document.querySelector("body"), "lazy-check-no-scroll");
+    utility.toggleClass(modalContainer, 'show');
+    utility.toggleClass(document.querySelector('body'), 'lazy-check-no-scroll');
   },
 
   clearAllInputs: function({ modalContainer }) {
-    const inputs = modalContainer.getElementsByTagName("input");
+    const inputs = modalContainer.getElementsByTagName('input');
 
-    if (!inputs.length) return;
+    if ( ! inputs.length ) {
+      return;
+    }
 
     for (const input of inputs) {
       input.checked = false;
@@ -233,10 +272,10 @@ const lazyCheckCore = {
 
   applySelection: function({ id, modalContainer }) {
     const rootContainer = this.getRootContainerByID(id);
-    const allCheckedItems = modalContainer.querySelectorAll("input:checked");
+    const allCheckedItems = modalContainer.querySelectorAll('input:checked');
 
     // Reset to init state if no item is checked
-    if (!allCheckedItems.length) {
+    if ( ! allCheckedItems.length ) {
       this.resetToInitState({ modalContainer, rootContainer });
       this.closeModel({ modalContainer });
       return;
@@ -253,48 +292,48 @@ const lazyCheckCore = {
   },
 
   insertModal: function(id) {
-    const modalContainer = document.createElement("div");
-    modalContainer.className = "lazy-check-modal";
-    modalContainer.setAttribute("data-lazy-check-modal-id", id);
+    const modalContainer = document.createElement('div');
+    modalContainer.className = 'lazy-check-modal';
+    modalContainer.setAttribute('data-lazy-check-modal-id', id);
     modalContainer.innerHTML = `
-           <div class="lazy-check-modal-content">
-               <div class="lazy-check-modal-header">
-                   <h4 class="lazy-check-modal-header-title">${this.args.modalTitle} </h4>
+           <div class='lazy-check-modal-content'>
+               <div class='lazy-check-modal-header'>
+                   <h4 class='lazy-check-modal-header-title'>${this.args.modalTitle} </h4>
 
-                   <span class="lazy-check-modal-close">
-                       <i class="fas fa-times"></i>
+                   <span class='lazy-check-modal-close'>
+                       <i class='fas fa-times'></i>
                    </span>
                </div>
 
-               <div class="lazy-check-modal-body">
-                   <div class="lazy-check-modal-fields"></div>
+               <div class='lazy-check-modal-body'>
+                   <div class='lazy-check-modal-fields'></div>
 
-                   <div class="lazy-check-modal-fields-controls"></div>
+                   <div class='lazy-check-modal-fields-controls'></div>
 
-                   <div class="lazy-check-modal-feedback"></div>
+                   <div class='lazy-check-modal-feedback'></div>
                </div>
 
-               <div class="lazy-check-modal-footer">
-                   <div class="lazy-check-modal-actions">
-                       <button type="button" class="lazy-check-btn lazy-check-btn-secondary lazy-check-clear-btn">Clear all</button>
-                       <button type="button" class="lazy-check-btn lazy-check-btn-primary lazy-check-apply-btn">Apply</button>
+               <div class='lazy-check-modal-footer'>
+                   <div class='lazy-check-modal-actions'>
+                       <button type='button' class='lazy-check-btn lazy-check-btn-secondary lazy-check-clear-btn'>Clear all</button>
+                       <button type='button' class='lazy-check-btn lazy-check-btn-primary lazy-check-apply-btn'>Apply</button>
                    </div>
                </div>
            </div>
        `;
 
     const rootContainer = document.querySelector(
-      "[data-lazy-check-root-element-id='" + id + "']"
+      `[data-lazy-check-root-element-id='${id}']`
     );
     const initFields = rootContainer.querySelectorAll(
-      ".directorist-lazy-check-items .directorist-lazy-check-item-wrap"
+      '.directorist-lazy-check-items .directorist-lazy-check-item-wrap'
     );
 
     // Change ID's for input and label
     for (const field of initFields) {
       const migratedField = this.migrateInputIDsForModal(field);
       modalContainer
-        .querySelector(".lazy-check-modal-fields")
+        .querySelector('.lazy-check-modal-fields')
         .append(migratedField);
     }
 
@@ -303,20 +342,20 @@ const lazyCheckCore = {
     // Attach Events
     // ---------------
     // Close Button
-    const closeButton = modalContainer.querySelector(".lazy-check-modal-close");
-    closeButton.addEventListener("click", event =>
+    const closeButton = modalContainer.querySelector('.lazy-check-modal-close');
+    closeButton.addEventListener('click', event =>
       this.closeModel({ event, id, modalContainer })
     );
 
     // Clear Button
-    const clearButton = modalContainer.querySelector(".lazy-check-clear-btn");
-    clearButton.addEventListener("click", event =>
+    const clearButton = modalContainer.querySelector('.lazy-check-clear-btn');
+    clearButton.addEventListener('click', event =>
       this.clearAllInputs({ event, id, modalContainer })
     );
 
     // Apply Button
-    const applyButton = modalContainer.querySelector(".lazy-check-apply-btn");
-    applyButton.addEventListener("click", event =>
+    const applyButton = modalContainer.querySelector('.lazy-check-apply-btn');
+    applyButton.addEventListener('click', event =>
       this.applySelection({ event, id, modalContainer })
     );
 
@@ -329,36 +368,44 @@ const lazyCheckCore = {
     const modalContainer = this.getModalContainerByID(id);
 
     // Get checked items from root element
-    const rootCheckedInputs = rootContainer.querySelectorAll("input:checked");
+    const rootCheckedInputs = rootContainer.querySelectorAll('input:checked');
     const rootCheckedItems = [];
 
-    if (rootCheckedInputs.length) {
-      for (const input of rootCheckedInputs) {
-        rootCheckedItems.push(input.parentElement);
+    if ( rootCheckedInputs.length ) {
+      for ( const input of rootCheckedInputs ) {
+        rootCheckedItems.push( input.parentElement );
       }
     }
 
     // Sync migrated checked items to modal
-    const modalInputs = rootContainer.querySelectorAll("input");
-    for (const input of modalInputs) {
-      const id = input.getAttribute("id");
+    const rootlInputs = rootContainer.querySelectorAll('input');
+    for (const rootInput of rootlInputs) {
+      const id = rootInput.getAttribute('id');
       const modalInput = modalContainer.querySelector(`#modal-id-${id}`);
 
-      if (!modalInput) {
+      if ( ! modalInput ) {
         return;
       }
 
-      modalInput.checked = input.checked;
+      modalInput.checked = rootInput.checked;
     }
 
     // Sort checked items in modal
-    let modalCheckedInputs = modalContainer.querySelectorAll("input:checked");
+    let modalCheckedInputs = modalContainer.querySelectorAll('input:checked');
     modalCheckedInputs = [...modalCheckedInputs].reverse();
 
     modalCheckedInputs.map(input => {
       modalContainer
-        .querySelector(".lazy-check-modal-fields")
+        .querySelector('.lazy-check-modal-fields')
         .prepend(input.parentElement);
+    });
+
+    // Show hidden items
+    let modalInputs = modalContainer.querySelectorAll('input');
+    [...modalInputs].map( item => {
+      item.parentElement.classList.remove( 'lazy-check-hide' );
+      // const newClasses = item.parentElement.className.replace( 'lazy-check-hide', '' );
+      // item.parentElement.className = newClasses;
     });
   },
 
@@ -381,18 +428,18 @@ const lazyCheckCore = {
     }
 
     controllArea.innerHTML += `
-    <a class="lazy-check-modal-load-more-link">
-        <span class="lazy-check-modal-load-more-icon">
-            <i class="fas fa-arrow-alt-circle-down"></i>
+    <a class='lazy-check-modal-load-more-link'>
+        <span class='lazy-check-modal-load-more-text'>
+            ${this.args.ajax.loadMoreText}
         </span>
     </a>
     `;
 
     const loadMoreLink = modalContainer.querySelector(
-      ".lazy-check-modal-load-more-link"
+      '.lazy-check-modal-load-more-link'
     );
 
-    loadMoreLink.addEventListener("click", event =>
+    loadMoreLink.addEventListener('click', event =>
       this.loadMoreFields({ modalContainer })
     );
   },
@@ -423,19 +470,26 @@ const lazyCheckCore = {
     // Add Loading Indicator
     this.addLoadingIndicatorToModal( modalContainer );
 
-    const nextData = await this.fetchData( modelID );
+    const nextData = await this.fetchData({ id: modelID, itemIDPrefix: 'modal-id-' });
 
     // Remove Loading Indicator
     this.removeLoadingIndicatorFromModal( modalContainer );
 
-    if ( ! nextData.success || ! nextData.data.items.length ) {
+    if ( ! nextData || ! nextData.success || ! nextData.data.items.length ) {
       return;
     }
 
     // Insert items to the DOM
     let itemsContainer = modalContainer.querySelector( '.lazy-check-modal-fields' );
     nextData.data.template.map(item => {
-      itemsContainer.innerHTML += item;
+      let itemElementWrap = document.createElement('div');
+      itemElementWrap.innerHTML = item;
+
+      const itemElement = itemElementWrap.querySelector( '.directorist-lazy-check-item-wrap' );
+
+      if ( itemElement ) {
+        itemsContainer.appendChild( itemElement );
+      }
     });
   },
 
@@ -444,9 +498,7 @@ const lazyCheckCore = {
     rootContainer,
     allCheckedItems
   }) {
-    const maxInitItemLength = parseInt(
-      rootContainer.getAttribute("data-lazy-check-max-init-item-length")
-    );
+    const maxInitItemLength = this.args.ajax.maxInitItems;
     let { checkedItems, checkedIDs } = this.getCheckedItems({
       allCheckedItems,
       maxInitItemLength
@@ -467,9 +519,9 @@ const lazyCheckCore = {
     });
 
     const itemsContainer = rootContainer.querySelector(
-      ".directorist-lazy-check-items"
+      '.directorist-lazy-check-items'
     );
-    itemsContainer.innerHTML = "";
+    itemsContainer.innerHTML = '';
 
     for (const item of migratedSelectedItems) {
       itemsContainer.append(item);
@@ -482,10 +534,12 @@ const lazyCheckCore = {
     let count = 0;
 
     for (const item of allCheckedItems) {
-      if (count === maxInitItemLength) break;
-
       const parent = item.parentElement;
-      const id = item.getAttribute("id");
+      const id = item.getAttribute('id');
+
+      if ( count >= maxInitItemLength ) {
+        parent.classList += ' lazy-check-hide';
+      }
 
       checkedIDs.push(id);
       checkedItems.push(parent);
@@ -502,21 +556,29 @@ const lazyCheckCore = {
     checkedItems,
     checkedIDs
   }) {
-    const initItems = modalContainer.querySelectorAll(".init-item");
+    const initItems = modalContainer.querySelectorAll('.init-item');
 
-    if (!initItems.length) return checkedItems;
+    if ( ! initItems.length ) {
+      return checkedItems;
+    }
 
     let requiredItemLength = maxInitItemLength - checkedItems.length;
     let count = 0;
 
-    for (const initItem of initItems) {
-      if (count === requiredItemLength) break;
+    for ( const initItem of initItems ) {
+      if ( count === requiredItemLength ) {
+        break;
+      }
 
-      const input = initItem.querySelector("input");
-      if (!input) continue;
+      const input = initItem.querySelector('input');
+      if ( ! input ) {
+        continue;
+      }
 
-      const id = input.getAttribute("id");
-      if (checkedIDs.includes(id)) continue;
+      const id = input.getAttribute('id');
+      if ( checkedIDs.includes(id) ) {
+        continue;
+      }
 
       checkedItems.push(initItem);
 
@@ -527,20 +589,20 @@ const lazyCheckCore = {
   },
 
   resetToInitState: function({ modalContainer, rootContainer }) {
-    const initItems = modalContainer.querySelectorAll(".init-item");
+    const initItems = modalContainer.querySelectorAll('.init-item');
 
-    if (!initItems.length) {
+    if ( ! initItems.length ) {
       return;
     }
 
     const itemsContainer = rootContainer.querySelector(
-      ".directorist-lazy-check-items"
+      '.directorist-lazy-check-items'
     );
 
-    itemsContainer.innerHTML = "";
+    itemsContainer.innerHTML = '';
 
     for (const item of initItems) {
-      const idConverter = oldID => oldID.replace("modal-id-", "");
+      const idConverter = oldID => oldID.replace('modal-id-', '');
       const migratedField = this.migrateInputIDs({
         field: item,
         idConverter
@@ -559,13 +621,15 @@ const lazyCheckCore = {
       return 1;
     }
 
-    return parseInt(rootContainer.getAttribute("data-lazy-check-current-page"));
+    return parseInt(rootContainer.getAttribute('data-lazy-check-current-page'));
   },
 
   updateCurrentPage: function(rootContainer, newPageNumber) {
-    if ( ! rootContainer ) return;
+    if ( ! rootContainer ) {
+      return;
+    }
 
-    rootContainer.setAttribute("data-lazy-check-current-page", newPageNumber);
+    rootContainer.setAttribute('data-lazy-check-current-page', newPageNumber);
   },
 
   hasNextPage: function(rootContainer) {
@@ -573,7 +637,7 @@ const lazyCheckCore = {
       return false;
     }
 
-    return parseInt(rootContainer.getAttribute("data-lazy-check-has-next-page")) ? true : false;
+    return parseInt(rootContainer.getAttribute('data-lazy-check-has-next-page')) ? true : false;
   },
 
   updateHasNextPageStatus: function(rootContainer, status) {
@@ -581,7 +645,7 @@ const lazyCheckCore = {
       return;
     }
 
-    rootContainer.setAttribute("data-lazy-check-has-next-page", ( status ) ? 1 : 0);
+    rootContainer.setAttribute('data-lazy-check-has-next-page', ( status ) ? 1 : 0);
   },
 
   getIsLoadingStatus: function(rootContainer) {
@@ -589,7 +653,7 @@ const lazyCheckCore = {
       return false;
     }
 
-    const isLoading = rootContainer.getAttribute("data-lazy-check-is-loading");
+    const isLoading = rootContainer.getAttribute('data-lazy-check-is-loading');
 
     return isLoading === '1' || isLoading === true ? true : false;
   },
@@ -599,7 +663,7 @@ const lazyCheckCore = {
       return;
     }
 
-    rootContainer.setAttribute("data-lazy-check-is-loading", ( status ) ? 1 : 0);
+    rootContainer.setAttribute('data-lazy-check-is-loading', ( status ) ? 1 : 0);
   },
 
   getModalContainerByID: function(id) {
@@ -668,17 +732,29 @@ const lazyCheckCore = {
     feedbackArea.innerHTML = '';
   },
 
-  fetchData: async function(id) {
+  isLoadedPreselectedItems: function ( rootContainer ) {
+    const isLoadedPreselectedItems = rootContainer.getAttribute('data-lazy-check-is-loaded-preselected-items');
+
+    return ( isLoadedPreselectedItems === '1' ) ? true : false;
+  },
+
+  updateIsLoadedPreselectedItemsStatus: function ( rootContainer, status ) {
+    const newStatus = ( status ) ? '1' : '0';
+    rootContainer.setAttribute( 'data-lazy-check-is-loaded-preselected-items', newStatus );
+  },
+
+  fetchData: async function({ id, itemIDPrefix }) {
+    // Response Status
+    let responseStatus = new utility.responseStatus();
+
     // Prepare Data
     const rootContainer = this.getRootContainerByID(id);
     const modalContainer = this.getModalContainerByID( id );
 
     if ( ! rootContainer ) {
-      return null;
+      responseStatus.success = false;
+      responseStatus.message = 'Root Container not found';
     }
-
-    // Response Status
-    let responseStatus = new utility.responseStatus();
 
     // Stop if already loading
     const isLoading = this.getIsLoadingStatus( rootContainer );
@@ -698,7 +774,39 @@ const lazyCheckCore = {
     const currentPage = this.getCurrentPage(rootContainer);
     const newPage = currentPage + 1;
 
-    const formData = this.args.ajax.data({ page: newPage });
+    // Load Pre Selected Items
+    let preselectedItemsID = this.args.ajax.getPreselectedItemsID();
+    preselectedItemsID = ( preselectedItemsID instanceof Array ) ? preselectedItemsID : [];
+
+    const isLoadedPreselectedItems = this.isLoadedPreselectedItems( rootContainer );
+
+    let preselectedItems = [];
+
+    if ( preselectedItemsID.length && ! isLoadedPreselectedItems ) {
+      const formData = this.args.ajax.data({
+        isLoadingPreselectedItems: true,
+        preselectedItemsID
+      });
+
+      let url = this.args.ajax.url;
+      url = url + httpHelpers.jsonToQueryString(formData);
+
+      const response = await fetch(url);
+      const body     = await response.json();
+
+      if ( response.ok && body instanceof Array ) {
+        preselectedItems = body;
+        this.updateIsLoadedPreselectedItemsStatus( rootContainer, true );
+      }
+    }
+
+    // Load General Items
+    const formData = this.args.ajax.data({
+      page: newPage,
+      isLoadingPreselectedItems: false,
+      preselectedItemsID
+    });
+
     let url = this.args.ajax.url;
     url = url + httpHelpers.jsonToQueryString(formData);
 
@@ -706,41 +814,43 @@ const lazyCheckCore = {
     const headers  = response.headers;
     const body     = await response.json();
 
-    console.log( { formData, body } );
-
     // Validate Response
     if ( ! response.ok ) {
       responseStatus.success = false;
-      responseStatus.message = "Something went wrong";
+      responseStatus.message = 'Something went wrong';
 
       return responseStatus;
     }
 
     // Process Results
-    const processResults = this.args.ajax.processResults({ body, headers, hasNextPage: false });
+    let processResults = this.args.ajax.processResults({ body, headers, hasNextPage: false });
 
     // Validate Process Results
     if ( ! ( processResults && typeof processResults == 'object' ) ) {
       responseStatus.success = false;
-      responseStatus.message = "Something went wrong";
+      responseStatus.message = 'Something went wrong';
 
       return responseStatus;
     }
 
     if ( ! (processResults.body && processResults.body instanceof Array ) ) {
       responseStatus.success = false;
-      responseStatus.message = "Response body must be array";
+      responseStatus.message = 'Response body must be array';
 
       return responseStatus;
     }
 
+    // Merge Preselected Items
+    if ( preselectedItems.length ) {
+      processResults.body = [ ...preselectedItems, ...processResults.body ];
+    }
+
     if ( ! processResults.body.length ) {
       responseStatus.success = false;
-      responseStatus.message = "No result found";
+      responseStatus.message = 'No result found';
 
       // Update Has Next Page Status
-      const hasNextPage = ( processResults.hasNextPage ) ? true : false;
-      this.updateHasNextPageStatus(rootContainer, hasNextPage);
+      this.updateHasNextPageStatus( rootContainer, false );
 
       // Remove Load More Button
       this.removeLoadMoreButtonFromModal( modalContainer );
@@ -754,7 +864,8 @@ const lazyCheckCore = {
     // Process Results
     const templateData = processResults.body.map( item => {
       try {
-        item.randomID = 'modal-id-' + utility.generateRandom( 100000, 999999 );
+        const idPrefix = itemIDPrefix ? itemIDPrefix : '';
+        item.randomID = idPrefix + utility.generateRandom( 100000, 999999 );
 
         return this.args.ajax.template( item, headers );
       } catch (error) {

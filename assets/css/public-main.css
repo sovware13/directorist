@@ -9586,6 +9586,10 @@ p.atbd-min {
   overflow: hidden;
 }
 
+.lazy-check-hide {
+  display: none;
+}
+
 .lazy-check-modal {
   display: none;
   position: fixed;
@@ -9685,14 +9689,15 @@ p.atbd-min {
 .lazy-check-modal .lazy-check-modal-content .lazy-check-modal-load-more-link:active, .lazy-check-modal .lazy-check-modal-content .lazy-check-modal-load-more-link:focus, .lazy-check-modal .lazy-check-modal-content .lazy-check-modal-load-more-link:visited {
   outline: none;
 }
-.lazy-check-modal .lazy-check-modal-content .lazy-check-modal-load-more-link .lazy-check-modal-load-more-icon {
+.lazy-check-modal .lazy-check-modal-content .lazy-check-modal-load-more-link .lazy-check-modal-load-more-text {
   -webkit-transition: all ease-in-out 300ms;
   transition: all ease-in-out 300ms;
 }
-.lazy-check-modal .lazy-check-modal-content .lazy-check-modal-load-more-link:hover .lazy-check-modal-load-more-icon {
+.lazy-check-modal .lazy-check-modal-content .lazy-check-modal-load-more-link:hover .lazy-check-modal-load-more-text {
   color: #064fbf;
 }
-.lazy-check-modal .lazy-check-modal-content .lazy-check-modal-load-more-icon {
+.lazy-check-modal .lazy-check-modal-content .lazy-check-modal-load-more-text {
+  font-size: 16px;
   color: #0864f0;
   cursor: pointer;
 }

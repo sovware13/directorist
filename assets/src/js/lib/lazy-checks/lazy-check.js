@@ -9,19 +9,19 @@ const lazyCheck = function(userArgs) {
     showMoreToggleClass: '',
     ajax: {
       url: '',
+      maxInitItems: 5,
+      getPreselectedItemsID: () => [],
       data: params => params,
-
-      processResults: ( response ) => {
-        return response;
-      },
-
+      processResults: ( response ) => response,
       template: ( item, headers ) => {
-        return '';
+        return `<div class="directorist-lazy-check-item-wrap">
+          <input type="checkbox" name="field[]" value="" id="${item.randomID}">
+          <label for="${item.randomID}">${item.name}</label>
+        </div>`;
       },
-
       loadingIndicator: 'Loading...',
+      loadMoreText: 'Load more',
     },
-    debagMode: false
   };
 
   this.args = lazyCheckCore.parseArgs(userArgs, _defaultArgs);

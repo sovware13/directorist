@@ -13,6 +13,10 @@ $secondary-deep-darken-color: #4a4a4a;
     overflow: hidden;
 }
 
+.lazy-check-hide {
+    display: none;
+}
+
 .lazy-check-modal {
     display: none;
     position: fixed;
@@ -93,16 +97,17 @@ $secondary-deep-darken-color: #4a4a4a;
                 outline: none;
             }
 
-            .lazy-check-modal-load-more-icon {
+            .lazy-check-modal-load-more-text {
                 transition: all ease-in-out 300ms;
             }
 
-            &:hover .lazy-check-modal-load-more-icon {
+            &:hover .lazy-check-modal-load-more-text {
                 color: $primary-darken-color;
             }
         }
 
-        .lazy-check-modal-load-more-icon {
+        .lazy-check-modal-load-more-text {
+            font-size: 16px;
             color: $primary-color;
             cursor: pointer;
         }

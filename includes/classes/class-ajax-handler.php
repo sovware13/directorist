@@ -121,11 +121,15 @@ if (!class_exists('ATBDP_Ajax_Handler')) :
 			$per_page   = ( isset( $_GET['per_page'] ) ) ? $_GET['per_page'] : 4;
 			$offset     = ( isset( $_GET['offset'] ) ) ? $_GET['offset'] : null;
 			$tag_source = ( isset( $_GET['tag_source'] ) ) ? $_GET['tag_source'] : 'all_tags';
+			$include    = ( isset( $_GET['include'] ) ) ? $_GET['include'] : [];
+			$exclude    = ( isset( $_GET['exclude'] ) ) ? $_GET['exclude'] : [];
 
 			$query_args = [];
 			$query_args['page'] = $page;
 			$query_args['per_page'] = $per_page;
 			$query_args['offset'] = $offset;
+			$query_args['include'] = explode( ',', $include );
+			$query_args['exclude'] = explode( ',', $exclude );
 
 			$result = Directorist_Listing_Search_Form::listing_tag_terms( $tag_source, $query_args );
 

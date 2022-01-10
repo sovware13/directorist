@@ -610,9 +610,30 @@ class Directorist_Listing_Search_Form {
 		$page            = ( isset( $query_args['page'] ) && is_numeric( $query_args['page'] ) ) ? ( int ) $query_args['page'] : 1;
 		$per_page        = ( isset( $query_args['per_page'] ) && is_numeric( $query_args['per_page'] ) ) ? ( int ) $query_args['per_page'] : 4;
 		$offset          = ( isset( $query_args['offset'] ) && is_numeric( $query_args['offset'] ) ) ? ( int ) $query_args['offset'] : ( ( $per_page * $page ) - $per_page );
+		$offset          = ( $offset < 0 ) ? 0 : $offset;
+		$include         = ( isset( $query_args['include'] ) && is_array( $query_args['include'] ) ) ? $query_args['include'] : [];
+		$exclude         = ( isset( $query_args['exclude'] ) && is_array( $query_args['exclude'] ) ) ? $query_args['exclude'] : [];
 
 		if ( 'all_tags' == $tag_source || empty( $category_select ) ) {
-			$terms = get_terms( ATBDP_TAGS, [ 'number' => $per_page, 'offset' => $offset ] );
+			$terms_args = [
+				'taxonomy' => ATBDP_TAGS,
+				'number'   => $per_page,
+				'offset'   => $offset,
+			];
+
+			if ( ! empty( $include ) ) {
+				$terms_args['include'] =  $include;
+			}
+
+			if ( ! empty( $exclude ) ) {
+				$terms_args['exclude'] =  $exclude;
+			}
+
+			if ( $per_page < 0 ) {
+				unset( $terms_args['number'] );
+			}
+
+			$terms = get_terms( $terms_args );
 		} else {
 			$tag_args = array(
 				'post_type'      => ATBDP_POST_TYPE,

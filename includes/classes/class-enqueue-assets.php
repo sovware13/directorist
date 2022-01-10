@@ -21,6 +21,8 @@ class Enqueue_Assets {
 			add_filter( 'directorist_load_min_files', [ $this, 'manage_min_unmin_assets_switching' ] );
 
 			// Enqueue Public Scripts
+			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_public_preloaded_scripts' ] );
+
 			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_public_scripts' ] );
 
 			// Enqueue Admin Scripts
@@ -32,6 +34,21 @@ class Enqueue_Assets {
 
 
 		return self::$instance;
+	}
+
+	/**
+	 * Load Preloaded Assets
+	 *
+	 * @return void
+	 */
+	public static function load_preloaded_assets() {
+		// Set Script Version
+		$script_version = ( self::load_min_files() ) ? DIRECTORIST_SCRIPT_VERSION : md5( time() );
+		self::$script_version = apply_filters( 'directorist_script_version', $script_version );
+
+		// Apply Hook to Scripts
+		self::$css_scripts = apply_filters( 'directorist_preloaded_css_scripts', self::$css_scripts );
+		self::$js_scripts = apply_filters( 'directorist_preloaded_js_scripts', self::$js_scripts );
 	}
 
 	/**
@@ -1028,6 +1045,25 @@ class Enqueue_Assets {
 		// JS
 		self::register_js_scripts();
 		self::enqueue_js_scripts_by_group( [ 'group' => 'global', 'page' => $page, 'fource_enqueue' => $fource_enqueue ] );
+	}
+
+	/**
+	 * Enqueue Public Preloaded Scripts
+	 *
+	 * @return void
+	 */
+	public static function enqueue_public_preloaded_scripts( $page = '', $fource_enqueue = false ) {
+		// Load Assets
+		self::load_preloaded_assets();
+
+		// CSS
+		self::register_css_scripts();
+		self::enqueue_css_scripts_by_group( [ 'group' => 'public', 'page' => $page, 'fource_enqueue' => $fource_enqueue ] );
+		wp_add_inline_style( 'directorist-inline-style', self::dynamic_style() );
+
+		// JS
+		self::register_js_scripts();
+		self::enqueue_js_scripts_by_group( [ 'group' => 'public', 'page' => $page, 'fource_enqueue' => $fource_enqueue ] );
 	}
 
 	/**

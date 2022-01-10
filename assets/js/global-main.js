@@ -95,22 +95,51 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _lib_lazy_checks_lazy_check__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../lib/lazy-checks/lazy-check */ "./assets/src/js/lib/lazy-checks/lazy-check.js");
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js");
+/* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _lib_lazy_checks_lazy_check__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../lib/lazy-checks/lazy-check */ "./assets/src/js/lib/lazy-checks/lazy-check.js");
+
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
 
 
 window.onload = function () {
-  new _lib_lazy_checks_lazy_check__WEBPACK_IMPORTED_MODULE_0__["default"]({
+  var defaultArgs = {
     modalTitle: "Tags",
     containerClass: "directorist-tags-lazy-checks",
     showMoreToggleClass: "directorist-link",
     ajax: {
       url: atbdp_public_data.ajaxurl,
+      maxInitItems: 4,
+      getPreselectedItemsID: function getPreselectedItemsID() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var in_tag = urlParams.getAll('in_tag[]');
+        return in_tag instanceof Array ? in_tag : [];
+      },
       data: function data(params) {
         params.action = "directorist_get_tags";
-        params.page = params.page || 1;
-        params.per_page = 4; // params.per_page   = ( ! params.page || params.page === 1 ) ? 4 : 50;
-
         params.tag_source = "all_tags";
+
+        if (params.isLoadingPreselectedItems && params.preselectedItemsID.length) {
+          params.page = 1;
+          params.per_page = -1;
+          params.include = params.preselectedItemsID;
+        } else if (!params.isLoadingPreselectedItems && params.preselectedItemsID.length) {
+          params.page = params.page || 1;
+          params.per_page = 4;
+          params.exclude = params.preselectedItemsID;
+        } else {
+          params.page = params.page || 1;
+          params.per_page = 4;
+        }
+
+        ;
         return params;
       },
       processResults: function processResults(response) {
@@ -119,22 +148,26 @@ window.onload = function () {
       },
       template: function template(item) {
         var id = item.randomID;
-        var urlSearchParams = new URLSearchParams(window.location.search);
-        var params = Object.fromEntries(urlSearchParams.entries());
-        var in_tag = params.in_tag;
-
-        if (in_tag) {
-          try {
-            in_tag = JSON.parse(in_tag);
-          } catch (error) {}
-        }
-
-        var checked = in_tag instanceof Array && in_tag.includes(item.term_id) ? 'checked' : '';
+        var urParams = new URLSearchParams(window.location.search);
+        var in_tag = urParams.getAll('in_tag[]');
+        var checked = in_tag instanceof Array && in_tag.includes("".concat(item.term_id)) ? 'checked' : '';
         return "\n        <div class=\"directorist-checkbox directorist-checkbox-primary directorist-lazy-check-item-wrap\">\n          <input type=\"checkbox\" name=\"in_tag[]\" value=\"".concat(item.term_id, "\" id=\"").concat(id, "\"").concat(checked, ">\n          <label for=\"").concat(id, "\" class=\"directorist-checkbox__label\">").concat(item.name, "</label>\n        </div>\n        ");
       }
-    },
-    debagMode: true
-  }).init();
+    }
+  };
+  var filterArgs = window.directoristLazyTagArgs;
+  var args = defaultArgs;
+
+  if (filterArgs && _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1___default()(filterArgs) == 'object') {
+    args = _objectSpread(_objectSpread({}, defaultArgs), filterArgs);
+    args.ajax = defaultArgs.ajax;
+
+    if (filterArgs.ajax && _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_1___default()(filterArgs.ajax) == 'object') {
+      args.ajax = _objectSpread(_objectSpread({}, defaultArgs.ajax), filterArgs.ajax);
+    }
+  }
+
+  new _lib_lazy_checks_lazy_check__WEBPACK_IMPORTED_MODULE_2__["default"](args).init();
 };
 
 /***/ }),
@@ -699,12 +732,13 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -719,26 +753,42 @@ var lazyCheckCore = {
     // --------------------------
 
 
-    if (args.ajax && !Array.isArray(args.ajax) && _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2___default()(args.ajax) === "object") {
+    if (args.ajax && !Array.isArray(args.ajax) && _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2___default()(args.ajax) === 'object') {
       args.ajax = _objectSpread(_objectSpread({}, defaultArgs.ajax), args.ajax);
     } else {
       args.ajax = defaultArgs.ajax;
     }
 
-    if (typeof args.ajax.data !== "function") {
+    if (typeof args.ajax.maxInitItems !== 'number') {
+      args.ajax.maxInitItems = parseInt(defaultArgs.ajax.maxInitItems);
+    }
+
+    if (args.ajax.maxInitItems < 1) {
+      args.ajax.maxInitItems = 1;
+    }
+
+    if (typeof args.ajax.getPreselectedItemsID !== 'function') {
+      args.ajax.getPreselectedItemsID = defaultArgs.ajax.getPreselectedItemsID;
+    }
+
+    if (typeof args.ajax.data !== 'function') {
       args.ajax.data = defaultArgs.ajax.data;
     }
 
-    if (typeof args.ajax.processResults !== "function") {
+    if (typeof args.ajax.processResults !== 'function') {
       args.ajax.processResults = defaultArgs.ajax.processResults;
     }
 
-    if (typeof args.ajax.template !== "function") {
+    if (typeof args.ajax.template !== 'function') {
       args.ajax.template = defaultArgs.ajax.template;
     }
 
     if (typeof args.ajax.loadingIndicator !== 'string') {
       args.ajax.loadingIndicator = defaultArgs.ajax.loadingIndicator;
+    }
+
+    if (typeof args.ajax.loadMoreText !== 'string') {
+      args.ajax.loadMoreText = defaultArgs.ajax.loadMoreText;
     }
 
     return args;
@@ -747,8 +797,7 @@ var lazyCheckCore = {
     var _enableLazyChecks = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4___default.a.mark(function _callee(rootContainer, args) {
       var _this = this;
 
-      var id, initData, _itemsContainer, itemsContainer, initialItems, _iterator, _step, item, toggle;
-
+      var id, initData, toggle;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4___default.a.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -756,61 +805,41 @@ var lazyCheckCore = {
               this.args = args; // Attach ID to root element
 
               id = _utility__WEBPACK_IMPORTED_MODULE_6__["default"].generateRandom(100, 999);
-              rootContainer.setAttribute("data-lazy-check-root-element-id", id); // Attach current page number to root element
+              rootContainer.setAttribute('data-lazy-check-root-element-id', id); // Attach current page number to root element
 
-              rootContainer.setAttribute("data-lazy-check-current-page", 0); // Prepare Root Element
+              rootContainer.setAttribute('data-lazy-check-current-page', 0); // Prepare Root Element
 
               this.prepareRootElement(id); // Add Loading Indicator To Root Container
 
               this.addLoadingIndicatorToRootContainer(rootContainer); // Load initial data
 
               _context.next = 8;
-              return this.fetchData(id);
+              return this.fetchData({
+                id: id
+              });
 
             case 8:
               initData = _context.sent;
               // Remove Loading Indicator From Root Container
               this.removeLoadingIndicatorFromRootContainer(rootContainer); // Insert items to the DOM
 
-              if (initData.success && initData.data.items.length) {
-                _itemsContainer = rootContainer.querySelector('.directorist-lazy-check-items');
-                initData.data.template.map(function (item) {
-                  _itemsContainer.innerHTML += item;
+              if (initData.success) {
+                this.insertInitItemsToDOM({
+                  rootContainer: rootContainer,
+                  items: initData.data.template
                 });
-              } // Get items container
-
-
-              itemsContainer = rootContainer.querySelector(".directorist-lazy-check-items"); // Get init items
-
-              initialItems = itemsContainer.querySelectorAll(".directorist-lazy-check-item-wrap"); // Set max item limit to root element
-
-              rootContainer.setAttribute("data-lazy-check-max-init-item-length", initialItems.length); // Add identifier to init items
-
-              if (initialItems.length) {
-                _iterator = _createForOfIteratorHelper(initialItems);
-
-                try {
-                  for (_iterator.s(); !(_step = _iterator.n()).done;) {
-                    item = _step.value;
-                    item.classList.add("init-item");
-                  }
-                } catch (err) {
-                  _iterator.e(err);
-                } finally {
-                  _iterator.f();
-                }
               } // Enable Toggle
 
 
-              toggle = rootContainer.querySelector(".directorist-lazy-check-toggle-show-more");
+              toggle = rootContainer.querySelector('.directorist-lazy-check-toggle-show-more');
 
               if (toggle) {
-                toggle.addEventListener("click", function (event) {
-                  return _this.toogleModal(event, rootContainer);
+                toggle.addEventListener('click', function (event) {
+                  return _this.toggleModal(event, rootContainer);
                 });
               }
 
-            case 17:
+            case 13:
             case "end":
               return _context.stop();
           }
@@ -824,46 +853,95 @@ var lazyCheckCore = {
 
     return enableLazyChecks;
   }(),
+  insertInitItemsToDOM: function insertInitItemsToDOM(_ref) {
+    var _this2 = this;
+
+    var rootContainer = _ref.rootContainer,
+        items = _ref.items;
+
+    if (!items.length) {
+      return;
+    }
+
+    var maxInitItems = this.args.ajax.maxInitItems;
+    var rootItems = items.slice(0, maxInitItems);
+    var modalItems = items.slice(maxInitItems);
+
+    if (rootItems.length) {
+      var _itemsContainer = rootContainer.querySelector('.directorist-lazy-check-items');
+
+      rootItems.map(function (item) {
+        var itemElementWrap = document.createElement('div');
+        itemElementWrap.innerHTML = item;
+        var itemElement = itemElementWrap.querySelector('.directorist-lazy-check-item-wrap');
+        itemElement.classList.add('init-item');
+
+        if (itemElement) {
+          _itemsContainer.appendChild(itemElement);
+        }
+      });
+    }
+
+    var id = rootContainer.getAttribute('data-lazy-check-root-element-id');
+    var modalContainer = document.querySelector("[data-lazy-check-modal-id='".concat(id, "']"));
+
+    if (!modalContainer) {
+      modalContainer = this.insertModal(id);
+    }
+
+    var itemsContainer = modalContainer.querySelector('.lazy-check-modal-fields');
+    modalItems.map(function (item) {
+      var itemElementWrap = document.createElement('div');
+      itemElementWrap.innerHTML = item;
+      var itemElement = itemElementWrap.querySelector('.directorist-lazy-check-item-wrap');
+
+      if (itemElement) {
+        var migratedItemElement = _this2.migrateInputIDsForModal(itemElement);
+
+        itemsContainer.appendChild(migratedItemElement);
+      }
+    });
+  },
   prepareRootElement: function prepareRootElement(id) {
     var rootContainer = this.getRootContainerByID(id);
-    var itemsContainer = rootContainer.querySelector(".directorist-lazy-check-items");
+    var itemsContainer = rootContainer.querySelector('.directorist-lazy-check-items');
 
     if (!itemsContainer) {
-      itemsContainer = document.createElement("div");
-      itemsContainer.classList = "directorist-lazy-check-items";
+      itemsContainer = document.createElement('div');
+      itemsContainer.classList = 'directorist-lazy-check-items';
       rootContainer.append(itemsContainer);
     } // Add Show More Area
 
 
-    var showMoreArea = rootContainer.querySelector(".directorist-lazy-check-show-more-area");
+    var showMoreArea = rootContainer.querySelector('.directorist-lazy-check-show-more-area');
 
     if (!showMoreArea) {
-      showMoreArea = document.createElement("div");
-      showMoreArea.classList = "directorist-lazy-check-show-more-area";
+      showMoreArea = document.createElement('div');
+      showMoreArea.classList = 'directorist-lazy-check-show-more-area';
       _utility__WEBPACK_IMPORTED_MODULE_6__["default"].insertAfter(itemsContainer, showMoreArea);
     }
 
-    showMoreArea.innerHTML = ""; // Add Feedback Area
+    showMoreArea.innerHTML = ''; // Add Feedback Area
 
-    var feedbackArea = rootContainer.querySelector(".lazy-check-feedback");
+    var feedbackArea = rootContainer.querySelector('.lazy-check-feedback');
 
     if (!feedbackArea) {
-      feedbackArea = document.createElement("div");
-      feedbackArea.classList = "lazy-check-feedback";
+      feedbackArea = document.createElement('div');
+      feedbackArea.classList = 'lazy-check-feedback';
       itemsContainer.parentNode.insertBefore(feedbackArea, showMoreArea);
     }
 
-    feedbackArea.innerHTML = ""; // Insert Toggle Link
+    feedbackArea.innerHTML = ''; // Insert Toggle Link
 
-    var toggleLink = document.createElement("a");
-    toggleLink.setAttribute("href", "#");
+    var toggleLink = document.createElement('a');
+    toggleLink.setAttribute('href', '#');
     toggleLink.classList = "directorist-lazy-check-toggle-show-more ".concat(this.args.showMoreToggleClass);
     toggleLink.innerHTML = this.args.showMorelabel;
     showMoreArea.append(toggleLink);
   },
-  toogleModal: function toogleModal(event, rootContainer) {
+  toggleModal: function toggleModal(event, rootContainer) {
     event.preventDefault();
-    var id = rootContainer.getAttribute("data-lazy-check-root-element-id");
+    var id = rootContainer.getAttribute('data-lazy-check-root-element-id');
     var modalContainer = document.querySelector("[data-lazy-check-modal-id='".concat(id, "']"));
 
     if (!modalContainer) {
@@ -872,7 +950,7 @@ var lazyCheckCore = {
       this.updateModal(id);
     }
 
-    var hasNextPage = this.hasNextPage(rootContainer); // this.addLoadMoreButtonToModal( modalContainer );
+    var hasNextPage = this.hasNextPage(rootContainer);
 
     if (hasNextPage) {
       this.addLoadMoreButtonToModal(modalContainer);
@@ -880,55 +958,55 @@ var lazyCheckCore = {
       this.removeLoadMoreButtonFromModal(modalContainer);
     }
 
-    _utility__WEBPACK_IMPORTED_MODULE_6__["default"].toggleClass(document.querySelector("body"), "lazy-check-no-scroll");
-    _utility__WEBPACK_IMPORTED_MODULE_6__["default"].toggleClass(modalContainer, "show");
+    _utility__WEBPACK_IMPORTED_MODULE_6__["default"].toggleClass(document.querySelector('body'), 'lazy-check-no-scroll');
+    _utility__WEBPACK_IMPORTED_MODULE_6__["default"].toggleClass(modalContainer, 'show');
   },
-  migrateInputIDs: function migrateInputIDs(_ref) {
-    var field = _ref.field,
-        idConverter = _ref.idConverter;
+  migrateInputIDs: function migrateInputIDs(_ref2) {
+    var field = _ref2.field,
+        idConverter = _ref2.idConverter;
     var clonedField = field.cloneNode(true); // Input Fields
 
-    var inputFields = clonedField.getElementsByTagName("input");
+    var inputFields = clonedField.getElementsByTagName('input');
 
     if (inputFields.length) {
-      var _iterator2 = _createForOfIteratorHelper(inputFields),
+      var _iterator = _createForOfIteratorHelper(inputFields),
+          _step;
+
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var fieldItem = _step.value;
+          var oldID = fieldItem.getAttribute('id');
+          var newID = idConverter(oldID);
+          fieldItem.setAttribute('id', newID);
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
+    } // Labels
+
+
+    var labels = clonedField.getElementsByTagName('label');
+
+    if (labels.length) {
+      var _iterator2 = _createForOfIteratorHelper(labels),
           _step2;
 
       try {
         for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-          var fieldItem = _step2.value;
-          var oldID = fieldItem.getAttribute("id");
-          var newID = idConverter(oldID);
-          fieldItem.setAttribute("id", newID);
+          var label = _step2.value;
+
+          var _oldID = label.getAttribute('for');
+
+          var _newID = idConverter(_oldID);
+
+          label.setAttribute('for', _newID);
         }
       } catch (err) {
         _iterator2.e(err);
       } finally {
         _iterator2.f();
-      }
-    } // Labels
-
-
-    var labels = clonedField.getElementsByTagName("label");
-
-    if (labels.length) {
-      var _iterator3 = _createForOfIteratorHelper(labels),
-          _step3;
-
-      try {
-        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-          var label = _step3.value;
-
-          var _oldID = label.getAttribute("for");
-
-          var _newID = idConverter(_oldID);
-
-          label.setAttribute("for", _newID);
-        }
-      } catch (err) {
-        _iterator3.e(err);
-      } finally {
-        _iterator3.f();
       }
     }
 
@@ -936,7 +1014,7 @@ var lazyCheckCore = {
   },
   migrateInputIDsForModal: function migrateInputIDsForModal(field) {
     var idConverter = function idConverter(oldID) {
-      return "modal-id-" + oldID;
+      return 'modal-id-' + oldID;
     };
 
     return this.migrateInputIDs({
@@ -946,7 +1024,7 @@ var lazyCheckCore = {
   },
   migrateInputIDsForRootElement: function migrateInputIDsForRootElement(field) {
     var idConverter = function idConverter(oldID) {
-      return oldID.replace("modal-id-", "");
+      return oldID.replace('modal-id-', '');
     };
 
     return this.migrateInputIDs({
@@ -954,35 +1032,38 @@ var lazyCheckCore = {
       idConverter: idConverter
     });
   },
-  closeModel: function closeModel(_ref2) {
-    var modalContainer = _ref2.modalContainer;
-    _utility__WEBPACK_IMPORTED_MODULE_6__["default"].toggleClass(modalContainer, "show");
-    _utility__WEBPACK_IMPORTED_MODULE_6__["default"].toggleClass(document.querySelector("body"), "lazy-check-no-scroll");
-  },
-  clearAllInputs: function clearAllInputs(_ref3) {
+  closeModel: function closeModel(_ref3) {
     var modalContainer = _ref3.modalContainer;
-    var inputs = modalContainer.getElementsByTagName("input");
-    if (!inputs.length) return;
+    _utility__WEBPACK_IMPORTED_MODULE_6__["default"].toggleClass(modalContainer, 'show');
+    _utility__WEBPACK_IMPORTED_MODULE_6__["default"].toggleClass(document.querySelector('body'), 'lazy-check-no-scroll');
+  },
+  clearAllInputs: function clearAllInputs(_ref4) {
+    var modalContainer = _ref4.modalContainer;
+    var inputs = modalContainer.getElementsByTagName('input');
 
-    var _iterator4 = _createForOfIteratorHelper(inputs),
-        _step4;
+    if (!inputs.length) {
+      return;
+    }
+
+    var _iterator3 = _createForOfIteratorHelper(inputs),
+        _step3;
 
     try {
-      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-        var input = _step4.value;
+      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+        var input = _step3.value;
         input.checked = false;
       }
     } catch (err) {
-      _iterator4.e(err);
+      _iterator3.e(err);
     } finally {
-      _iterator4.f();
+      _iterator3.f();
     }
   },
-  applySelection: function applySelection(_ref4) {
-    var id = _ref4.id,
-        modalContainer = _ref4.modalContainer;
+  applySelection: function applySelection(_ref5) {
+    var id = _ref5.id,
+        modalContainer = _ref5.modalContainer;
     var rootContainer = this.getRootContainerByID(id);
-    var allCheckedItems = modalContainer.querySelectorAll("input:checked"); // Reset to init state if no item is checked
+    var allCheckedItems = modalContainer.querySelectorAll('input:checked'); // Reset to init state if no item is checked
 
     if (!allCheckedItems.length) {
       this.resetToInitState({
@@ -1006,55 +1087,55 @@ var lazyCheckCore = {
     });
   },
   insertModal: function insertModal(id) {
-    var _this2 = this;
+    var _this3 = this;
 
-    var modalContainer = document.createElement("div");
-    modalContainer.className = "lazy-check-modal";
-    modalContainer.setAttribute("data-lazy-check-modal-id", id);
-    modalContainer.innerHTML = "\n           <div class=\"lazy-check-modal-content\">\n               <div class=\"lazy-check-modal-header\">\n                   <h4 class=\"lazy-check-modal-header-title\">".concat(this.args.modalTitle, " </h4>\n\n                   <span class=\"lazy-check-modal-close\">\n                       <i class=\"fas fa-times\"></i>\n                   </span>\n               </div>\n\n               <div class=\"lazy-check-modal-body\">\n                   <div class=\"lazy-check-modal-fields\"></div>\n\n                   <div class=\"lazy-check-modal-fields-controls\"></div>\n\n                   <div class=\"lazy-check-modal-feedback\"></div>\n               </div>\n\n               <div class=\"lazy-check-modal-footer\">\n                   <div class=\"lazy-check-modal-actions\">\n                       <button type=\"button\" class=\"lazy-check-btn lazy-check-btn-secondary lazy-check-clear-btn\">Clear all</button>\n                       <button type=\"button\" class=\"lazy-check-btn lazy-check-btn-primary lazy-check-apply-btn\">Apply</button>\n                   </div>\n               </div>\n           </div>\n       ");
-    var rootContainer = document.querySelector("[data-lazy-check-root-element-id='" + id + "']");
-    var initFields = rootContainer.querySelectorAll(".directorist-lazy-check-items .directorist-lazy-check-item-wrap"); // Change ID's for input and label
+    var modalContainer = document.createElement('div');
+    modalContainer.className = 'lazy-check-modal';
+    modalContainer.setAttribute('data-lazy-check-modal-id', id);
+    modalContainer.innerHTML = "\n           <div class='lazy-check-modal-content'>\n               <div class='lazy-check-modal-header'>\n                   <h4 class='lazy-check-modal-header-title'>".concat(this.args.modalTitle, " </h4>\n\n                   <span class='lazy-check-modal-close'>\n                       <i class='fas fa-times'></i>\n                   </span>\n               </div>\n\n               <div class='lazy-check-modal-body'>\n                   <div class='lazy-check-modal-fields'></div>\n\n                   <div class='lazy-check-modal-fields-controls'></div>\n\n                   <div class='lazy-check-modal-feedback'></div>\n               </div>\n\n               <div class='lazy-check-modal-footer'>\n                   <div class='lazy-check-modal-actions'>\n                       <button type='button' class='lazy-check-btn lazy-check-btn-secondary lazy-check-clear-btn'>Clear all</button>\n                       <button type='button' class='lazy-check-btn lazy-check-btn-primary lazy-check-apply-btn'>Apply</button>\n                   </div>\n               </div>\n           </div>\n       ");
+    var rootContainer = document.querySelector("[data-lazy-check-root-element-id='".concat(id, "']"));
+    var initFields = rootContainer.querySelectorAll('.directorist-lazy-check-items .directorist-lazy-check-item-wrap'); // Change ID's for input and label
 
-    var _iterator5 = _createForOfIteratorHelper(initFields),
-        _step5;
+    var _iterator4 = _createForOfIteratorHelper(initFields),
+        _step4;
 
     try {
-      for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-        var field = _step5.value;
+      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+        var field = _step4.value;
         var migratedField = this.migrateInputIDsForModal(field);
-        modalContainer.querySelector(".lazy-check-modal-fields").append(migratedField);
+        modalContainer.querySelector('.lazy-check-modal-fields').append(migratedField);
       }
     } catch (err) {
-      _iterator5.e(err);
+      _iterator4.e(err);
     } finally {
-      _iterator5.f();
+      _iterator4.f();
     }
 
     document.body.append(modalContainer); // Attach Events
     // ---------------
     // Close Button
 
-    var closeButton = modalContainer.querySelector(".lazy-check-modal-close");
-    closeButton.addEventListener("click", function (event) {
-      return _this2.closeModel({
+    var closeButton = modalContainer.querySelector('.lazy-check-modal-close');
+    closeButton.addEventListener('click', function (event) {
+      return _this3.closeModel({
         event: event,
         id: id,
         modalContainer: modalContainer
       });
     }); // Clear Button
 
-    var clearButton = modalContainer.querySelector(".lazy-check-clear-btn");
-    clearButton.addEventListener("click", function (event) {
-      return _this2.clearAllInputs({
+    var clearButton = modalContainer.querySelector('.lazy-check-clear-btn');
+    clearButton.addEventListener('click', function (event) {
+      return _this3.clearAllInputs({
         event: event,
         id: id,
         modalContainer: modalContainer
       });
     }); // Apply Button
 
-    var applyButton = modalContainer.querySelector(".lazy-check-apply-btn");
-    applyButton.addEventListener("click", function (event) {
-      return _this2.applySelection({
+    var applyButton = modalContainer.querySelector('.lazy-check-apply-btn');
+    applyButton.addEventListener('click', function (event) {
+      return _this3.applySelection({
         event: event,
         id: id,
         modalContainer: modalContainer
@@ -1067,36 +1148,36 @@ var lazyCheckCore = {
     var rootContainer = this.getRootContainerByID(id);
     var modalContainer = this.getModalContainerByID(id); // Get checked items from root element
 
-    var rootCheckedInputs = rootContainer.querySelectorAll("input:checked");
+    var rootCheckedInputs = rootContainer.querySelectorAll('input:checked');
     var rootCheckedItems = [];
 
     if (rootCheckedInputs.length) {
-      var _iterator6 = _createForOfIteratorHelper(rootCheckedInputs),
-          _step6;
+      var _iterator5 = _createForOfIteratorHelper(rootCheckedInputs),
+          _step5;
 
       try {
-        for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-          var input = _step6.value;
+        for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+          var input = _step5.value;
           rootCheckedItems.push(input.parentElement);
         }
       } catch (err) {
-        _iterator6.e(err);
+        _iterator5.e(err);
       } finally {
-        _iterator6.f();
+        _iterator5.f();
       }
     } // Sync migrated checked items to modal
 
 
-    var modalInputs = rootContainer.querySelectorAll("input");
+    var rootlInputs = rootContainer.querySelectorAll('input');
 
-    var _iterator7 = _createForOfIteratorHelper(modalInputs),
-        _step7;
+    var _iterator6 = _createForOfIteratorHelper(rootlInputs),
+        _step6;
 
     try {
-      for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-        var _input = _step7.value;
+      for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+        var rootInput = _step6.value;
 
-        var _id = _input.getAttribute("id");
+        var _id = rootInput.getAttribute('id');
 
         var modalInput = modalContainer.querySelector("#modal-id-".concat(_id));
 
@@ -1104,23 +1185,30 @@ var lazyCheckCore = {
           return;
         }
 
-        modalInput.checked = _input.checked;
+        modalInput.checked = rootInput.checked;
       } // Sort checked items in modal
 
     } catch (err) {
-      _iterator7.e(err);
+      _iterator6.e(err);
     } finally {
-      _iterator7.f();
+      _iterator6.f();
     }
 
-    var modalCheckedInputs = modalContainer.querySelectorAll("input:checked");
+    var modalCheckedInputs = modalContainer.querySelectorAll('input:checked');
     modalCheckedInputs = _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(modalCheckedInputs).reverse();
     modalCheckedInputs.map(function (input) {
-      modalContainer.querySelector(".lazy-check-modal-fields").prepend(input.parentElement);
+      modalContainer.querySelector('.lazy-check-modal-fields').prepend(input.parentElement);
+    }); // Show hidden items
+
+    var modalInputs = modalContainer.querySelectorAll('input');
+
+    _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(modalInputs).map(function (item) {
+      item.parentElement.classList.remove('lazy-check-hide'); // const newClasses = item.parentElement.className.replace( 'lazy-check-hide', '' );
+      // item.parentElement.className = newClasses;
     });
   },
   addLoadMoreButtonToModal: function addLoadMoreButtonToModal(modalContainer, force_add) {
-    var _this3 = this;
+    var _this4 = this;
 
     if (!modalContainer) {
       return;
@@ -1140,10 +1228,10 @@ var lazyCheckCore = {
       return;
     }
 
-    controllArea.innerHTML += "\n    <a class=\"lazy-check-modal-load-more-link\">\n        <span class=\"lazy-check-modal-load-more-icon\">\n            <i class=\"fas fa-arrow-alt-circle-down\"></i>\n        </span>\n    </a>\n    ";
-    var loadMoreLink = modalContainer.querySelector(".lazy-check-modal-load-more-link");
-    loadMoreLink.addEventListener("click", function (event) {
-      return _this3.loadMoreFields({
+    controllArea.innerHTML += "\n    <a class='lazy-check-modal-load-more-link'>\n        <span class='lazy-check-modal-load-more-text'>\n            ".concat(this.args.ajax.loadMoreText, "\n        </span>\n    </a>\n    ");
+    var loadMoreLink = modalContainer.querySelector('.lazy-check-modal-load-more-link');
+    loadMoreLink.addEventListener('click', function (event) {
+      return _this4.loadMoreFields({
         modalContainer: modalContainer
       });
     });
@@ -1168,25 +1256,28 @@ var lazyCheckCore = {
     loadMoreLink.remove();
   },
   loadMoreFields: function () {
-    var _loadMoreFields = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4___default.a.mark(function _callee2(_ref5) {
+    var _loadMoreFields = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4___default.a.mark(function _callee2(_ref6) {
       var modalContainer, modelID, nextData, itemsContainer;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4___default.a.wrap(function _callee2$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              modalContainer = _ref5.modalContainer;
+              modalContainer = _ref6.modalContainer;
               modelID = this.getModalID(modalContainer); // Add Loading Indicator
 
               this.addLoadingIndicatorToModal(modalContainer);
               _context2.next = 5;
-              return this.fetchData(modelID);
+              return this.fetchData({
+                id: modelID,
+                itemIDPrefix: 'modal-id-'
+              });
 
             case 5:
               nextData = _context2.sent;
               // Remove Loading Indicator
               this.removeLoadingIndicatorFromModal(modalContainer);
 
-              if (!(!nextData.success || !nextData.data.items.length)) {
+              if (!(!nextData || !nextData.success || !nextData.data.items.length)) {
                 _context2.next = 9;
                 break;
               }
@@ -1197,7 +1288,13 @@ var lazyCheckCore = {
               // Insert items to the DOM
               itemsContainer = modalContainer.querySelector('.lazy-check-modal-fields');
               nextData.data.template.map(function (item) {
-                itemsContainer.innerHTML += item;
+                var itemElementWrap = document.createElement('div');
+                itemElementWrap.innerHTML = item;
+                var itemElement = itemElementWrap.querySelector('.directorist-lazy-check-item-wrap');
+
+                if (itemElement) {
+                  itemsContainer.appendChild(itemElement);
+                }
               });
 
             case 11:
@@ -1214,13 +1311,13 @@ var lazyCheckCore = {
 
     return loadMoreFields;
   }(),
-  applyCheckedItemsToRootElement: function applyCheckedItemsToRootElement(_ref6) {
-    var _this4 = this;
+  applyCheckedItemsToRootElement: function applyCheckedItemsToRootElement(_ref7) {
+    var _this5 = this;
 
-    var modalContainer = _ref6.modalContainer,
-        rootContainer = _ref6.rootContainer,
-        allCheckedItems = _ref6.allCheckedItems;
-    var maxInitItemLength = parseInt(rootContainer.getAttribute("data-lazy-check-max-init-item-length"));
+    var modalContainer = _ref7.modalContainer,
+        rootContainer = _ref7.rootContainer,
+        allCheckedItems = _ref7.allCheckedItems;
+    var maxInitItemLength = this.args.ajax.maxInitItems;
 
     var _this$getCheckedItems = this.getCheckedItems({
       allCheckedItems: allCheckedItems,
@@ -1240,43 +1337,98 @@ var lazyCheckCore = {
     }
 
     var migratedSelectedItems = checkedItems.map(function (field) {
-      return _this4.migrateInputIDsForRootElement(field);
+      return _this5.migrateInputIDsForRootElement(field);
     });
-    var itemsContainer = rootContainer.querySelector(".directorist-lazy-check-items");
-    itemsContainer.innerHTML = "";
+    var itemsContainer = rootContainer.querySelector('.directorist-lazy-check-items');
+    itemsContainer.innerHTML = '';
 
-    var _iterator8 = _createForOfIteratorHelper(migratedSelectedItems),
+    var _iterator7 = _createForOfIteratorHelper(migratedSelectedItems),
+        _step7;
+
+    try {
+      for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
+        var item = _step7.value;
+        itemsContainer.append(item);
+      }
+    } catch (err) {
+      _iterator7.e(err);
+    } finally {
+      _iterator7.f();
+    }
+  },
+  getCheckedItems: function getCheckedItems(_ref8) {
+    var allCheckedItems = _ref8.allCheckedItems,
+        maxInitItemLength = _ref8.maxInitItemLength;
+    var checkedItems = [];
+    var checkedIDs = [];
+    var count = 0;
+
+    var _iterator8 = _createForOfIteratorHelper(allCheckedItems),
         _step8;
 
     try {
       for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
         var item = _step8.value;
-        itemsContainer.append(item);
+        var parent = item.parentElement;
+        var id = item.getAttribute('id');
+
+        if (count >= maxInitItemLength) {
+          parent.classList += ' lazy-check-hide';
+        }
+
+        checkedIDs.push(id);
+        checkedItems.push(parent);
+        count++;
       }
     } catch (err) {
       _iterator8.e(err);
     } finally {
       _iterator8.f();
     }
+
+    return {
+      checkedItems: checkedItems,
+      checkedIDs: checkedIDs
+    };
   },
-  getCheckedItems: function getCheckedItems(_ref7) {
-    var allCheckedItems = _ref7.allCheckedItems,
-        maxInitItemLength = _ref7.maxInitItemLength;
-    var checkedItems = [];
-    var checkedIDs = [];
+  wrapWithAdditionalItems: function wrapWithAdditionalItems(_ref9) {
+    var modalContainer = _ref9.modalContainer,
+        maxInitItemLength = _ref9.maxInitItemLength,
+        checkedItems = _ref9.checkedItems,
+        checkedIDs = _ref9.checkedIDs;
+    var initItems = modalContainer.querySelectorAll('.init-item');
+
+    if (!initItems.length) {
+      return checkedItems;
+    }
+
+    var requiredItemLength = maxInitItemLength - checkedItems.length;
     var count = 0;
 
-    var _iterator9 = _createForOfIteratorHelper(allCheckedItems),
+    var _iterator9 = _createForOfIteratorHelper(initItems),
         _step9;
 
     try {
       for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
-        var item = _step9.value;
-        if (count === maxInitItemLength) break;
-        var parent = item.parentElement;
-        var id = item.getAttribute("id");
-        checkedIDs.push(id);
-        checkedItems.push(parent);
+        var initItem = _step9.value;
+
+        if (count === requiredItemLength) {
+          break;
+        }
+
+        var input = initItem.querySelector('input');
+
+        if (!input) {
+          continue;
+        }
+
+        var id = input.getAttribute('id');
+
+        if (checkedIDs.includes(id)) {
+          continue;
+        }
+
+        checkedItems.push(initItem);
         count++;
       }
     } catch (err) {
@@ -1285,64 +1437,29 @@ var lazyCheckCore = {
       _iterator9.f();
     }
 
-    return {
-      checkedItems: checkedItems,
-      checkedIDs: checkedIDs
-    };
+    return checkedItems;
   },
-  wrapWithAdditionalItems: function wrapWithAdditionalItems(_ref8) {
-    var modalContainer = _ref8.modalContainer,
-        maxInitItemLength = _ref8.maxInitItemLength,
-        checkedItems = _ref8.checkedItems,
-        checkedIDs = _ref8.checkedIDs;
-    var initItems = modalContainer.querySelectorAll(".init-item");
-    if (!initItems.length) return checkedItems;
-    var requiredItemLength = maxInitItemLength - checkedItems.length;
-    var count = 0;
+  resetToInitState: function resetToInitState(_ref10) {
+    var modalContainer = _ref10.modalContainer,
+        rootContainer = _ref10.rootContainer;
+    var initItems = modalContainer.querySelectorAll('.init-item');
+
+    if (!initItems.length) {
+      return;
+    }
+
+    var itemsContainer = rootContainer.querySelector('.directorist-lazy-check-items');
+    itemsContainer.innerHTML = '';
 
     var _iterator10 = _createForOfIteratorHelper(initItems),
         _step10;
 
     try {
       for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
-        var initItem = _step10.value;
-        if (count === requiredItemLength) break;
-        var input = initItem.querySelector("input");
-        if (!input) continue;
-        var id = input.getAttribute("id");
-        if (checkedIDs.includes(id)) continue;
-        checkedItems.push(initItem);
-        count++;
-      }
-    } catch (err) {
-      _iterator10.e(err);
-    } finally {
-      _iterator10.f();
-    }
-
-    return checkedItems;
-  },
-  resetToInitState: function resetToInitState(_ref9) {
-    var modalContainer = _ref9.modalContainer,
-        rootContainer = _ref9.rootContainer;
-    var initItems = modalContainer.querySelectorAll(".init-item");
-
-    if (!initItems.length) {
-      return;
-    }
-
-    var itemsContainer = rootContainer.querySelector(".directorist-lazy-check-items");
-    itemsContainer.innerHTML = "";
-
-    var _iterator11 = _createForOfIteratorHelper(initItems),
-        _step11;
-
-    try {
-      for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
-        var item = _step11.value;
+        var item = _step10.value;
 
         var idConverter = function idConverter(oldID) {
-          return oldID.replace("modal-id-", "");
+          return oldID.replace('modal-id-', '');
         };
 
         var migratedField = this.migrateInputIDs({
@@ -1352,9 +1469,9 @@ var lazyCheckCore = {
         itemsContainer.append(migratedField);
       }
     } catch (err) {
-      _iterator11.e(err);
+      _iterator10.e(err);
     } finally {
-      _iterator11.f();
+      _iterator10.f();
     }
   },
   getRootContainerByID: function getRootContainerByID(id) {
@@ -1365,32 +1482,35 @@ var lazyCheckCore = {
       return 1;
     }
 
-    return parseInt(rootContainer.getAttribute("data-lazy-check-current-page"));
+    return parseInt(rootContainer.getAttribute('data-lazy-check-current-page'));
   },
   updateCurrentPage: function updateCurrentPage(rootContainer, newPageNumber) {
-    if (!rootContainer) return;
-    rootContainer.setAttribute("data-lazy-check-current-page", newPageNumber);
+    if (!rootContainer) {
+      return;
+    }
+
+    rootContainer.setAttribute('data-lazy-check-current-page', newPageNumber);
   },
   hasNextPage: function hasNextPage(rootContainer) {
     if (!rootContainer) {
       return false;
     }
 
-    return parseInt(rootContainer.getAttribute("data-lazy-check-has-next-page")) ? true : false;
+    return parseInt(rootContainer.getAttribute('data-lazy-check-has-next-page')) ? true : false;
   },
   updateHasNextPageStatus: function updateHasNextPageStatus(rootContainer, status) {
     if (!rootContainer) {
       return;
     }
 
-    rootContainer.setAttribute("data-lazy-check-has-next-page", status ? 1 : 0);
+    rootContainer.setAttribute('data-lazy-check-has-next-page', status ? 1 : 0);
   },
   getIsLoadingStatus: function getIsLoadingStatus(rootContainer) {
     if (!rootContainer) {
       return false;
     }
 
-    var isLoading = rootContainer.getAttribute("data-lazy-check-is-loading");
+    var isLoading = rootContainer.getAttribute('data-lazy-check-is-loading');
     return isLoading === '1' || isLoading === true ? true : false;
   },
   updateIsLoadingStatus: function updateIsLoadingStatus(rootContainer, status) {
@@ -1398,7 +1518,7 @@ var lazyCheckCore = {
       return;
     }
 
-    rootContainer.setAttribute("data-lazy-check-is-loading", status ? 1 : 0);
+    rootContainer.setAttribute('data-lazy-check-is-loading', status ? 1 : 0);
   },
   getModalContainerByID: function getModalContainerByID(id) {
     return document.querySelector("[data-lazy-check-modal-id='".concat(id, "']"));
@@ -1459,30 +1579,36 @@ var lazyCheckCore = {
 
     feedbackArea.innerHTML = '';
   },
+  isLoadedPreselectedItems: function isLoadedPreselectedItems(rootContainer) {
+    var isLoadedPreselectedItems = rootContainer.getAttribute('data-lazy-check-is-loaded-preselected-items');
+    return isLoadedPreselectedItems === '1' ? true : false;
+  },
+  updateIsLoadedPreselectedItemsStatus: function updateIsLoadedPreselectedItemsStatus(rootContainer, status) {
+    var newStatus = status ? '1' : '0';
+    rootContainer.setAttribute('data-lazy-check-is-loaded-preselected-items', newStatus);
+  },
   fetchData: function () {
-    var _fetchData = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4___default.a.mark(function _callee3(id) {
-      var _this5 = this;
+    var _fetchData = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4___default.a.mark(function _callee3(_ref11) {
+      var _this6 = this;
 
-      var rootContainer, modalContainer, responseStatus, isLoading, currentPage, newPage, formData, url, response, headers, body, processResults, _hasNextPage, templateData, hasNextPage;
+      var id, itemIDPrefix, responseStatus, rootContainer, modalContainer, isLoading, currentPage, newPage, preselectedItemsID, isLoadedPreselectedItems, preselectedItems, _formData, _url, _response, _body, formData, url, response, headers, body, processResults, templateData, hasNextPage;
 
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4___default.a.wrap(function _callee3$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
             case 0:
-              // Prepare Data
+              id = _ref11.id, itemIDPrefix = _ref11.itemIDPrefix;
+              // Response Status
+              responseStatus = new _utility__WEBPACK_IMPORTED_MODULE_6__["default"].responseStatus(); // Prepare Data
+
               rootContainer = this.getRootContainerByID(id);
               modalContainer = this.getModalContainerByID(id);
 
-              if (rootContainer) {
-                _context3.next = 4;
-                break;
-              }
+              if (!rootContainer) {
+                responseStatus.success = false;
+                responseStatus.message = 'Root Container not found';
+              } // Stop if already loading
 
-              return _context3.abrupt("return", null);
-
-            case 4:
-              // Response Status
-              responseStatus = new _utility__WEBPACK_IMPORTED_MODULE_6__["default"].responseStatus(); // Stop if already loading
 
               isLoading = this.getIsLoadingStatus(rootContainer);
 
@@ -1501,38 +1627,71 @@ var lazyCheckCore = {
 
               this.removeLoadMoreButtonFromModal(modalContainer);
               currentPage = this.getCurrentPage(rootContainer);
-              newPage = currentPage + 1;
-              formData = this.args.ajax.data({
-                page: newPage
-              });
-              url = this.args.ajax.url;
-              url = url + _helpers_http_helpers__WEBPACK_IMPORTED_MODULE_5__["default"].jsonToQueryString(formData);
-              _context3.next = 19;
-              return fetch(url);
+              newPage = currentPage + 1; // Load Pre Selected Items
 
-            case 19:
-              response = _context3.sent;
-              headers = response.headers;
-              _context3.next = 23;
-              return response.json();
+              preselectedItemsID = this.args.ajax.getPreselectedItemsID();
+              preselectedItemsID = preselectedItemsID instanceof Array ? preselectedItemsID : [];
+              isLoadedPreselectedItems = this.isLoadedPreselectedItems(rootContainer);
+              preselectedItems = [];
 
-            case 23:
-              body = _context3.sent;
-              console.log({
-                formData: formData,
-                body: body
-              }); // Validate Response
-
-              if (response.ok) {
+              if (!(preselectedItemsID.length && !isLoadedPreselectedItems)) {
                 _context3.next = 29;
                 break;
               }
 
-              responseStatus.success = false;
-              responseStatus.message = "Something went wrong";
-              return _context3.abrupt("return", responseStatus);
+              _formData = this.args.ajax.data({
+                isLoadingPreselectedItems: true,
+                preselectedItemsID: preselectedItemsID
+              });
+              _url = this.args.ajax.url;
+              _url = _url + _helpers_http_helpers__WEBPACK_IMPORTED_MODULE_5__["default"].jsonToQueryString(_formData);
+              _context3.next = 24;
+              return fetch(_url);
+
+            case 24:
+              _response = _context3.sent;
+              _context3.next = 27;
+              return _response.json();
+
+            case 27:
+              _body = _context3.sent;
+
+              if (_response.ok && _body instanceof Array) {
+                preselectedItems = _body;
+                this.updateIsLoadedPreselectedItemsStatus(rootContainer, true);
+              }
 
             case 29:
+              // Load General Items
+              formData = this.args.ajax.data({
+                page: newPage,
+                isLoadingPreselectedItems: false,
+                preselectedItemsID: preselectedItemsID
+              });
+              url = this.args.ajax.url;
+              url = url + _helpers_http_helpers__WEBPACK_IMPORTED_MODULE_5__["default"].jsonToQueryString(formData);
+              _context3.next = 34;
+              return fetch(url);
+
+            case 34:
+              response = _context3.sent;
+              headers = response.headers;
+              _context3.next = 38;
+              return response.json();
+
+            case 38:
+              body = _context3.sent;
+
+              if (response.ok) {
+                _context3.next = 43;
+                break;
+              }
+
+              responseStatus.success = false;
+              responseStatus.message = 'Something went wrong';
+              return _context3.abrupt("return", responseStatus);
+
+            case 43:
               // Process Results
               processResults = this.args.ajax.processResults({
                 body: body,
@@ -1541,47 +1700,52 @@ var lazyCheckCore = {
               }); // Validate Process Results
 
               if (processResults && _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_2___default()(processResults) == 'object') {
-                _context3.next = 34;
+                _context3.next = 48;
                 break;
               }
 
               responseStatus.success = false;
-              responseStatus.message = "Something went wrong";
+              responseStatus.message = 'Something went wrong';
               return _context3.abrupt("return", responseStatus);
 
-            case 34:
+            case 48:
               if (processResults.body && processResults.body instanceof Array) {
-                _context3.next = 38;
+                _context3.next = 52;
                 break;
               }
 
               responseStatus.success = false;
-              responseStatus.message = "Response body must be array";
+              responseStatus.message = 'Response body must be array';
               return _context3.abrupt("return", responseStatus);
 
-            case 38:
+            case 52:
+              // Merge Preselected Items
+              if (preselectedItems.length) {
+                processResults.body = [].concat(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(preselectedItems), _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(processResults.body));
+              }
+
               if (processResults.body.length) {
-                _context3.next = 46;
+                _context3.next = 60;
                 break;
               }
 
               responseStatus.success = false;
-              responseStatus.message = "No result found"; // Update Has Next Page Status
+              responseStatus.message = 'No result found'; // Update Has Next Page Status
 
-              _hasNextPage = processResults.hasNextPage ? true : false;
-              this.updateHasNextPageStatus(rootContainer, _hasNextPage); // Remove Load More Button
+              this.updateHasNextPageStatus(rootContainer, false); // Remove Load More Button
 
               this.removeLoadMoreButtonFromModal(modalContainer); // Remove Loading Indicator
 
               this.removeLoadingIndicatorFromModal(modalContainer);
               return _context3.abrupt("return", responseStatus);
 
-            case 46:
+            case 60:
               // Process Results
               templateData = processResults.body.map(function (item) {
                 try {
-                  item.randomID = 'modal-id-' + _utility__WEBPACK_IMPORTED_MODULE_6__["default"].generateRandom(100000, 999999);
-                  return _this5.args.ajax.template(item, headers);
+                  var idPrefix = itemIDPrefix ? itemIDPrefix : '';
+                  item.randomID = idPrefix + _utility__WEBPACK_IMPORTED_MODULE_6__["default"].generateRandom(100000, 999999);
+                  return _this6.args.ajax.template(item, headers);
                 } catch (error) {
                   return '';
                 }
@@ -1608,7 +1772,7 @@ var lazyCheckCore = {
 
               return _context3.abrupt("return", responseStatus);
 
-            case 55:
+            case 69:
             case "end":
               return _context3.stop();
           }
@@ -1657,6 +1821,10 @@ var lazyCheck = function lazyCheck(userArgs) {
     showMoreToggleClass: '',
     ajax: {
       url: '',
+      maxInitItems: 5,
+      getPreselectedItemsID: function getPreselectedItemsID() {
+        return [];
+      },
       data: function data(params) {
         return params;
       },
@@ -1664,11 +1832,11 @@ var lazyCheck = function lazyCheck(userArgs) {
         return response;
       },
       template: function template(item, headers) {
-        return '';
+        return "<div class=\"directorist-lazy-check-item-wrap\">\n          <input type=\"checkbox\" name=\"field[]\" value=\"\" id=\"".concat(item.randomID, "\">\n          <label for=\"").concat(item.randomID, "\">").concat(item.name, "</label>\n        </div>");
       },
-      loadingIndicator: 'Loading...'
-    },
-    debagMode: false
+      loadingIndicator: 'Loading...',
+      loadMoreText: 'Load more'
+    }
   };
   this.args = _lazy_check_core__WEBPACK_IMPORTED_MODULE_0__["default"].parseArgs(userArgs, _defaultArgs);
   /**
