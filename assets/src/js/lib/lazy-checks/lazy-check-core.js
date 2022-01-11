@@ -76,17 +76,6 @@ const lazyCheckCore = {
     if ( initData.success ) {
       this.insertInitItemsToDOM({ rootContainer, items: initData.data.template });
     }
-
-    // Enable Toggle
-    const toggle = rootContainer.querySelector(
-      '.directorist-lazy-check-toggle-show-more'
-    );
-
-    if (toggle) {
-      toggle.addEventListener('click', event =>
-        this.toggleModal(event, rootContainer)
-      );
-    }
   },
 
   insertInitItemsToDOM: function({ rootContainer, items }) {
@@ -99,68 +88,97 @@ const lazyCheckCore = {
     const modalItems   = items.slice( maxInitItems );
 
     if ( rootItems.length ) {
-      let itemsContainer = rootContainer.querySelector( '.directorist-lazy-check-items' );
+      let itemsContainer = rootContainer.querySelector( '.lazy-check-items' );
 
       rootItems.map(item => {
         let itemElementWrap = document.createElement('div');
         itemElementWrap.innerHTML = item;
 
-        const itemElement = itemElementWrap.querySelector( '.directorist-lazy-check-item-wrap' );
-        itemElement.classList.add('init-item');
+        const itemElement = itemElementWrap.querySelector( '.lazy-check-item-wrap' );
 
         if ( itemElement ) {
+          itemElement.classList.add('init-item');
           itemsContainer.appendChild( itemElement );
         }
       });
     }
 
-    const id = rootContainer.getAttribute('data-lazy-check-root-element-id');
-    let modalContainer = document.querySelector(
-      `[data-lazy-check-modal-id='${id}']`
-    );
+    const hasNextPage = this.hasNextPage( rootContainer );
 
-    if ( ! modalContainer ) {
-      modalContainer = this.insertModal( id );
+    if ( modalItems.length || hasNextPage ) {
+      this.insertShowMoreLink( rootContainer );
     }
 
-    let itemsContainer = modalContainer.querySelector( '.lazy-check-modal-fields' );
+    if ( modalItems.length ) {
+      const id = rootContainer.getAttribute('data-lazy-check-root-element-id');
+      let modalContainer = document.querySelector(
+        `[data-lazy-check-modal-id='${id}']`
+      );
 
-    modalItems.map(item => {
-      let itemElementWrap = document.createElement('div');
-      itemElementWrap.innerHTML = item;
-
-      const itemElement = itemElementWrap.querySelector( '.directorist-lazy-check-item-wrap' );
-
-      if ( itemElement ) {
-        const migratedItemElement = this.migrateInputIDsForModal( itemElement );
-        itemsContainer.appendChild( migratedItemElement );
+      if ( ! modalContainer ) {
+        modalContainer = this.insertModal( id );
       }
-    });
 
+      const itemsContainer = modalContainer.querySelector( '.lazy-check-modal-fields' );
+      modalItems.map(item => {
+        let itemElementWrap = document.createElement('div');
+        itemElementWrap.innerHTML = item;
+
+        const itemElement = itemElementWrap.querySelector( '.lazy-check-item-wrap' );
+
+        if ( itemElement ) {
+          const migratedItemElement = this.migrateInputIDsForModal( itemElement );
+          itemsContainer.appendChild( migratedItemElement );
+        }
+      });
+    }
+  },
+
+  insertShowMoreLink: function( rootContainer ) {
+    let showMoreArea = rootContainer.querySelector(
+      '.lazy-check-show-more-area'
+    );
+
+    if ( ! showMoreArea ) {
+      return;
+    }
+
+    // Create Show More Link
+    const showMoreLink = document.createElement('a');
+    showMoreLink.setAttribute('href', '#');
+    showMoreLink.classList = `lazy-check-show-more ${this.args.showMoreLinkClass}`;
+    showMoreLink.innerHTML = this.args.showMorelabel;
+
+    showMoreArea.appendChild(showMoreLink);
+
+    // Enable Show More Link
+    showMoreLink.addEventListener('click', event =>
+      this.showModal(event, rootContainer)
+    );
   },
 
   prepareRootElement: function(id) {
     const rootContainer = this.getRootContainerByID(id);
 
     let itemsContainer = rootContainer.querySelector(
-      '.directorist-lazy-check-items'
+      '.lazy-check-items'
     );
 
     if (!itemsContainer) {
       itemsContainer = document.createElement('div');
-      itemsContainer.classList = 'directorist-lazy-check-items';
+      itemsContainer.classList = 'lazy-check-items';
 
       rootContainer.append(itemsContainer);
     }
 
     // Add Show More Area
     let showMoreArea = rootContainer.querySelector(
-      '.directorist-lazy-check-show-more-area'
+      '.lazy-check-show-more-area'
     );
 
     if ( ! showMoreArea ) {
       showMoreArea = document.createElement('div');
-      showMoreArea.classList = 'directorist-lazy-check-show-more-area';
+      showMoreArea.classList = 'lazy-check-show-more-area';
 
       utility.insertAfter(itemsContainer, showMoreArea);
     }
@@ -180,17 +198,9 @@ const lazyCheckCore = {
     }
 
     feedbackArea.innerHTML = '';
-
-    // Insert Toggle Link
-    const toggleLink = document.createElement('a');
-    toggleLink.setAttribute('href', '#');
-    toggleLink.classList = `directorist-lazy-check-toggle-show-more ${this.args.showMoreToggleClass}`;
-    toggleLink.innerHTML = this.args.showMorelabel;
-
-    showMoreArea.append(toggleLink);
   },
 
-  toggleModal: function(event, rootContainer) {
+  showModal: function(event, rootContainer) {
     event.preventDefault();
     const id = rootContainer.getAttribute('data-lazy-check-root-element-id');
     let modalContainer = document.querySelector(
@@ -326,7 +336,7 @@ const lazyCheckCore = {
       `[data-lazy-check-root-element-id='${id}']`
     );
     const initFields = rootContainer.querySelectorAll(
-      '.directorist-lazy-check-items .directorist-lazy-check-item-wrap'
+      '.lazy-check-items .lazy-check-item-wrap'
     );
 
     // Change ID's for input and label
@@ -485,7 +495,7 @@ const lazyCheckCore = {
       let itemElementWrap = document.createElement('div');
       itemElementWrap.innerHTML = item;
 
-      const itemElement = itemElementWrap.querySelector( '.directorist-lazy-check-item-wrap' );
+      const itemElement = itemElementWrap.querySelector( '.lazy-check-item-wrap' );
 
       if ( itemElement ) {
         itemsContainer.appendChild( itemElement );
@@ -519,7 +529,7 @@ const lazyCheckCore = {
     });
 
     const itemsContainer = rootContainer.querySelector(
-      '.directorist-lazy-check-items'
+      '.lazy-check-items'
     );
     itemsContainer.innerHTML = '';
 
@@ -596,7 +606,7 @@ const lazyCheckCore = {
     }
 
     const itemsContainer = rootContainer.querySelector(
-      '.directorist-lazy-check-items'
+      '.lazy-check-items'
     );
 
     itemsContainer.innerHTML = '';
@@ -823,7 +833,12 @@ const lazyCheckCore = {
     }
 
     // Process Results
-    let processResults = this.args.ajax.processResults({ body, headers, hasNextPage: false });
+    let processResults = this.args.ajax.processResults({
+      body,
+      headers,
+      params: formData,
+      hasNextPage: false
+    });
 
     // Validate Process Results
     if ( ! ( processResults && typeof processResults == 'object' ) ) {

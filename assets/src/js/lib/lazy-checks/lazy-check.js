@@ -6,7 +6,7 @@ const lazyCheck = function(userArgs) {
     modalTitle: '',
     containerClass: '',
     showMorelabel: 'Show More',
-    showMoreToggleClass: '',
+    showMoreLinkClass: '',
     ajax: {
       url: '',
       maxInitItems: 5,
@@ -14,7 +14,7 @@ const lazyCheck = function(userArgs) {
       data: params => params,
       processResults: ( response ) => response,
       template: ( item, headers ) => {
-        return `<div class="directorist-lazy-check-item-wrap">
+        return `<div class="lazy-check-item-wrap">
           <input type="checkbox" name="field[]" value="" id="${item.randomID}">
           <label for="${item.randomID}">${item.name}</label>
         </div>`;

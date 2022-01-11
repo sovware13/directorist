@@ -115,7 +115,7 @@ window.onload = function () {
     containerClass: "directorist-tags-lazy-checks",
     showMoreToggleClass: "directorist-link",
     ajax: {
-      url: atbdp_public_data.ajaxurl,
+      url: atbdp_public_data.rest_url + 'directorist/v1/listings/tags',
       maxInitItems: 4,
       getPreselectedItemsID: function getPreselectedItemsID() {
         var urlParams = new URLSearchParams(window.location.search);
@@ -123,35 +123,32 @@ window.onload = function () {
         return in_tag instanceof Array ? in_tag : [];
       },
       data: function data(params) {
-        params.action = "directorist_get_tags";
-        params.tag_source = "all_tags";
-
         if (params.isLoadingPreselectedItems && params.preselectedItemsID.length) {
           params.page = 1;
-          params.per_page = -1;
           params.include = params.preselectedItemsID;
         } else if (!params.isLoadingPreselectedItems && params.preselectedItemsID.length) {
           params.page = params.page || 1;
-          params.per_page = 4;
+          params.per_page = 50;
           params.exclude = params.preselectedItemsID;
         } else {
           params.page = params.page || 1;
-          params.per_page = 4;
+          params.per_page = 50;
         }
 
         ;
         return params;
       },
       processResults: function processResults(response) {
-        response.hasNextPage = true;
+        var currentPage = response.params.page;
+        var totalPage = parseInt(response.headers.get('X-WP-TotalPages'));
+        response.hasNextPage = currentPage >= totalPage ? false : true;
         return response;
       },
       template: function template(item) {
-        var id = item.randomID;
         var urParams = new URLSearchParams(window.location.search);
         var in_tag = urParams.getAll('in_tag[]');
-        var checked = in_tag instanceof Array && in_tag.includes("".concat(item.term_id)) ? 'checked' : '';
-        return "\n        <div class=\"directorist-checkbox directorist-checkbox-primary directorist-lazy-check-item-wrap\">\n          <input type=\"checkbox\" name=\"in_tag[]\" value=\"".concat(item.term_id, "\" id=\"").concat(id, "\"").concat(checked, ">\n          <label for=\"").concat(id, "\" class=\"directorist-checkbox__label\">").concat(item.name, "</label>\n        </div>\n        ");
+        var checked = in_tag instanceof Array && in_tag.includes("".concat(item.id)) ? 'checked' : '';
+        return "\n        <div class=\"lazy-check-item-wrap directorist-checkbox directorist-checkbox-primary\">\n          <input type=\"checkbox\" name=\"in_tag[]\" value=\"".concat(item.id, "\" id=\"").concat(item.randomID, "\"").concat(checked, ">\n          <label for=\"").concat(item.randomID, "\" class=\"directorist-checkbox__label\">").concat(item.name, "</label>\n        </div>\n        ");
       }
     }
   };
@@ -795,9 +792,7 @@ var lazyCheckCore = {
   },
   enableLazyChecks: function () {
     var _enableLazyChecks = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4___default.a.mark(function _callee(rootContainer, args) {
-      var _this = this;
-
-      var id, initData, toggle;
+      var id, initData;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_4___default.a.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
@@ -828,18 +823,9 @@ var lazyCheckCore = {
                   rootContainer: rootContainer,
                   items: initData.data.template
                 });
-              } // Enable Toggle
-
-
-              toggle = rootContainer.querySelector('.directorist-lazy-check-toggle-show-more');
-
-              if (toggle) {
-                toggle.addEventListener('click', function (event) {
-                  return _this.toggleModal(event, rootContainer);
-                });
               }
 
-            case 13:
+            case 11:
             case "end":
               return _context.stop();
           }
@@ -854,7 +840,7 @@ var lazyCheckCore = {
     return enableLazyChecks;
   }(),
   insertInitItemsToDOM: function insertInitItemsToDOM(_ref) {
-    var _this2 = this;
+    var _this = this;
 
     var rootContainer = _ref.rootContainer,
         items = _ref.items;
@@ -868,56 +854,84 @@ var lazyCheckCore = {
     var modalItems = items.slice(maxInitItems);
 
     if (rootItems.length) {
-      var _itemsContainer = rootContainer.querySelector('.directorist-lazy-check-items');
-
+      var itemsContainer = rootContainer.querySelector('.lazy-check-items');
       rootItems.map(function (item) {
         var itemElementWrap = document.createElement('div');
         itemElementWrap.innerHTML = item;
-        var itemElement = itemElementWrap.querySelector('.directorist-lazy-check-item-wrap');
-        itemElement.classList.add('init-item');
+        var itemElement = itemElementWrap.querySelector('.lazy-check-item-wrap');
 
         if (itemElement) {
-          _itemsContainer.appendChild(itemElement);
+          itemElement.classList.add('init-item');
+          itemsContainer.appendChild(itemElement);
         }
       });
     }
 
-    var id = rootContainer.getAttribute('data-lazy-check-root-element-id');
-    var modalContainer = document.querySelector("[data-lazy-check-modal-id='".concat(id, "']"));
+    var hasNextPage = this.hasNextPage(rootContainer);
 
-    if (!modalContainer) {
-      modalContainer = this.insertModal(id);
+    if (modalItems.length || hasNextPage) {
+      this.insertShowMoreLink(rootContainer);
     }
 
-    var itemsContainer = modalContainer.querySelector('.lazy-check-modal-fields');
-    modalItems.map(function (item) {
-      var itemElementWrap = document.createElement('div');
-      itemElementWrap.innerHTML = item;
-      var itemElement = itemElementWrap.querySelector('.directorist-lazy-check-item-wrap');
+    if (modalItems.length) {
+      var id = rootContainer.getAttribute('data-lazy-check-root-element-id');
+      var modalContainer = document.querySelector("[data-lazy-check-modal-id='".concat(id, "']"));
 
-      if (itemElement) {
-        var migratedItemElement = _this2.migrateInputIDsForModal(itemElement);
-
-        itemsContainer.appendChild(migratedItemElement);
+      if (!modalContainer) {
+        modalContainer = this.insertModal(id);
       }
+
+      var _itemsContainer = modalContainer.querySelector('.lazy-check-modal-fields');
+
+      modalItems.map(function (item) {
+        var itemElementWrap = document.createElement('div');
+        itemElementWrap.innerHTML = item;
+        var itemElement = itemElementWrap.querySelector('.lazy-check-item-wrap');
+
+        if (itemElement) {
+          var migratedItemElement = _this.migrateInputIDsForModal(itemElement);
+
+          _itemsContainer.appendChild(migratedItemElement);
+        }
+      });
+    }
+  },
+  insertShowMoreLink: function insertShowMoreLink(rootContainer) {
+    var _this2 = this;
+
+    var showMoreArea = rootContainer.querySelector('.lazy-check-show-more-area');
+
+    if (!showMoreArea) {
+      return;
+    } // Create Show More Link
+
+
+    var showMoreLink = document.createElement('a');
+    showMoreLink.setAttribute('href', '#');
+    showMoreLink.classList = "lazy-check-show-more ".concat(this.args.showMoreLinkClass);
+    showMoreLink.innerHTML = this.args.showMorelabel;
+    showMoreArea.appendChild(showMoreLink); // Enable Show More Link
+
+    showMoreLink.addEventListener('click', function (event) {
+      return _this2.showModal(event, rootContainer);
     });
   },
   prepareRootElement: function prepareRootElement(id) {
     var rootContainer = this.getRootContainerByID(id);
-    var itemsContainer = rootContainer.querySelector('.directorist-lazy-check-items');
+    var itemsContainer = rootContainer.querySelector('.lazy-check-items');
 
     if (!itemsContainer) {
       itemsContainer = document.createElement('div');
-      itemsContainer.classList = 'directorist-lazy-check-items';
+      itemsContainer.classList = 'lazy-check-items';
       rootContainer.append(itemsContainer);
     } // Add Show More Area
 
 
-    var showMoreArea = rootContainer.querySelector('.directorist-lazy-check-show-more-area');
+    var showMoreArea = rootContainer.querySelector('.lazy-check-show-more-area');
 
     if (!showMoreArea) {
       showMoreArea = document.createElement('div');
-      showMoreArea.classList = 'directorist-lazy-check-show-more-area';
+      showMoreArea.classList = 'lazy-check-show-more-area';
       _utility__WEBPACK_IMPORTED_MODULE_6__["default"].insertAfter(itemsContainer, showMoreArea);
     }
 
@@ -931,15 +945,9 @@ var lazyCheckCore = {
       itemsContainer.parentNode.insertBefore(feedbackArea, showMoreArea);
     }
 
-    feedbackArea.innerHTML = ''; // Insert Toggle Link
-
-    var toggleLink = document.createElement('a');
-    toggleLink.setAttribute('href', '#');
-    toggleLink.classList = "directorist-lazy-check-toggle-show-more ".concat(this.args.showMoreToggleClass);
-    toggleLink.innerHTML = this.args.showMorelabel;
-    showMoreArea.append(toggleLink);
+    feedbackArea.innerHTML = '';
   },
-  toggleModal: function toggleModal(event, rootContainer) {
+  showModal: function showModal(event, rootContainer) {
     event.preventDefault();
     var id = rootContainer.getAttribute('data-lazy-check-root-element-id');
     var modalContainer = document.querySelector("[data-lazy-check-modal-id='".concat(id, "']"));
@@ -1094,7 +1102,7 @@ var lazyCheckCore = {
     modalContainer.setAttribute('data-lazy-check-modal-id', id);
     modalContainer.innerHTML = "\n           <div class='lazy-check-modal-content'>\n               <div class='lazy-check-modal-header'>\n                   <h4 class='lazy-check-modal-header-title'>".concat(this.args.modalTitle, " </h4>\n\n                   <span class='lazy-check-modal-close'>\n                       <i class='fas fa-times'></i>\n                   </span>\n               </div>\n\n               <div class='lazy-check-modal-body'>\n                   <div class='lazy-check-modal-fields'></div>\n\n                   <div class='lazy-check-modal-fields-controls'></div>\n\n                   <div class='lazy-check-modal-feedback'></div>\n               </div>\n\n               <div class='lazy-check-modal-footer'>\n                   <div class='lazy-check-modal-actions'>\n                       <button type='button' class='lazy-check-btn lazy-check-btn-secondary lazy-check-clear-btn'>Clear all</button>\n                       <button type='button' class='lazy-check-btn lazy-check-btn-primary lazy-check-apply-btn'>Apply</button>\n                   </div>\n               </div>\n           </div>\n       ");
     var rootContainer = document.querySelector("[data-lazy-check-root-element-id='".concat(id, "']"));
-    var initFields = rootContainer.querySelectorAll('.directorist-lazy-check-items .directorist-lazy-check-item-wrap'); // Change ID's for input and label
+    var initFields = rootContainer.querySelectorAll('.lazy-check-items .lazy-check-item-wrap'); // Change ID's for input and label
 
     var _iterator4 = _createForOfIteratorHelper(initFields),
         _step4;
@@ -1290,7 +1298,7 @@ var lazyCheckCore = {
               nextData.data.template.map(function (item) {
                 var itemElementWrap = document.createElement('div');
                 itemElementWrap.innerHTML = item;
-                var itemElement = itemElementWrap.querySelector('.directorist-lazy-check-item-wrap');
+                var itemElement = itemElementWrap.querySelector('.lazy-check-item-wrap');
 
                 if (itemElement) {
                   itemsContainer.appendChild(itemElement);
@@ -1339,7 +1347,7 @@ var lazyCheckCore = {
     var migratedSelectedItems = checkedItems.map(function (field) {
       return _this5.migrateInputIDsForRootElement(field);
     });
-    var itemsContainer = rootContainer.querySelector('.directorist-lazy-check-items');
+    var itemsContainer = rootContainer.querySelector('.lazy-check-items');
     itemsContainer.innerHTML = '';
 
     var _iterator7 = _createForOfIteratorHelper(migratedSelectedItems),
@@ -1448,7 +1456,7 @@ var lazyCheckCore = {
       return;
     }
 
-    var itemsContainer = rootContainer.querySelector('.directorist-lazy-check-items');
+    var itemsContainer = rootContainer.querySelector('.lazy-check-items');
     itemsContainer.innerHTML = '';
 
     var _iterator10 = _createForOfIteratorHelper(initItems),
@@ -1696,6 +1704,7 @@ var lazyCheckCore = {
               processResults = this.args.ajax.processResults({
                 body: body,
                 headers: headers,
+                params: formData,
                 hasNextPage: false
               }); // Validate Process Results
 
@@ -1818,7 +1827,7 @@ var lazyCheck = function lazyCheck(userArgs) {
     modalTitle: '',
     containerClass: '',
     showMorelabel: 'Show More',
-    showMoreToggleClass: '',
+    showMoreLinkClass: '',
     ajax: {
       url: '',
       maxInitItems: 5,
@@ -1832,7 +1841,7 @@ var lazyCheck = function lazyCheck(userArgs) {
         return response;
       },
       template: function template(item, headers) {
-        return "<div class=\"directorist-lazy-check-item-wrap\">\n          <input type=\"checkbox\" name=\"field[]\" value=\"\" id=\"".concat(item.randomID, "\">\n          <label for=\"").concat(item.randomID, "\">").concat(item.name, "</label>\n        </div>");
+        return "<div class=\"lazy-check-item-wrap\">\n          <input type=\"checkbox\" name=\"field[]\" value=\"\" id=\"".concat(item.randomID, "\">\n          <label for=\"").concat(item.randomID, "\">").concat(item.name, "</label>\n        </div>");
       },
       loadingIndicator: 'Loading...',
       loadMoreText: 'Load more'

@@ -13,5 +13,5 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 		<label><?php echo esc_html( $data['label'] ); ?></label>
 	<?php endif; ?>
 
-	<div class="directorist-search-tags directorist-flex directorist-lazy-check-items"></div>
+	<div class="directorist-search-tags directorist-flex lazy-check-items"></div>
 </div>
