@@ -28,10 +28,13 @@ function setup_map() {
 
 function load() {
     var loc_data = get_dom_data( 'loc_data' );
-    var url = window.location.href;
-    var urlParts = URI.parse(url);
-    var queryStringParts = URI.parseQuery(urlParts.query);
-    var list = bundle1.getAndSelectVersionsAssetsList(queryStringParts);
+    var libVersionsDict = {
+        'leaflet': '1.3.1',
+        'leaflet.markercluster': '1.3.0',
+        'leaflet.featuregroup.subgroup': 'local',
+    };  
+
+    var list = bundle1.getAndSelectVersionsAssetsList( libVersionsDict );
 
     list.push({
         type: 'script',
