@@ -1,0 +1,1279 @@
+{
+    "label": "Font Awesome",
+    "iconTypes": {
+        "solid": {
+            "label": "Solid",
+            "key": "fa-solid"
+        },
+        "regular": {
+            "label": "Solid",
+            "key": "fa-regular"
+        },
+        "brand": {
+            "label": "Brand",
+            "key": "fa-brands"
+        }
+    },
+    "icons": [
+    {
+        "key": "fa-0",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-1",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-2",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-3",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-4",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-5",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-6",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-7",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-8",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-9",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-a",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-address-book",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-address-book",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-address-card",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-address-card",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-align-center",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-align-justify",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-align-left",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-align-right",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-anchor",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-anchor-circle-check",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-anchor-circle-exclamation",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-anchor-circle-xmark",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-anchor-lock",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-angle-down",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-angle-left",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-angle-right",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-angle-up",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-angles-down",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-angles-left",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-angles-right",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-angles-up",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-ankh",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-apple-whole",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-archway",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-down",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-down-1-9",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-down-9-1",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-down-a-z",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-down-long",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-down-short-wide",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-down-up-across-line",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-down-up-lock",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-down-wide-short",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-down-z-a",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-left",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-left-long",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-pointer",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-right",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-right-arrow-left",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-right-from-bracket",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-right-long",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-right-to-bracket",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-right-to-city",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-rotate-left",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-rotate-right",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-trend-down",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-trend-up",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-turn-down",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-turn-up",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-up",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-up-1-9",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-up-9-1",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-up-a-z",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-up-from-bracket",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-up-from-ground-water",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-up-from-water-pump",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-up-long",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-up-right-dots",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-up-right-from-square",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-up-short-wide",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-up-wide-short",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrow-up-z-a",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrows-down-to-line",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrows-down-to-people",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrows-left-right",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrows-left-right-to-line",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrows-rotate",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrows-spin",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrows-split-up-and-left",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrows-to-circle",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrows-to-dot",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrows-to-eye",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrows-turn-right",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrows-turn-to-dots",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrows-up-down",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrows-up-down-left-right",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-arrows-up-to-line",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-asterisk",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-at",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-atom",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-audio-description",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-austral-sign",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-award",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-b",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-baby",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-baby-carriage",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-backward",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-backward-fast",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-backward-step",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bacon",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bacteria",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bacterium",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bag-shopping",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bahai",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-baht-sign",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-ban",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-ban-smoking",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bandage",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-barcode",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bars",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bars-progress",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bars-staggered",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-baseball",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-baseball-bat-ball",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-basket-shopping",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-basketball",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bath",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-battery-empty",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-battery-full",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-battery-half",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-battery-quarter",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-battery-three-quarters",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bed",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bed-pulse",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-beer-mug-empty",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bell",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bell",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bell-concierge",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bell-slash",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bell-slash",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bezier-curve",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bicycle",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-binoculars",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-biohazard",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bitcoin-sign",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-blender",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-blender-phone",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-blog",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bold",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bolt",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bolt-lightning",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bomb",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bone",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bong",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-book",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-book-atlas",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-book-bible",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-book-bookmark",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-book-journal-whills",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-book-medical",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-book-open",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-book-open-reader",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-book-quran",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-book-skull",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bookmark",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bookmark",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-border-all",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-border-none",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-border-top-left",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bore-hole",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bottle-droplet",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bottle-water",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bowl-food",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bowl-rice",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bowling-ball",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-box",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-box-archive",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-box-open",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-box-tissue",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-boxes-packing",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-boxes-stacked",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-braille",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-brain",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-brazilian-real-sign",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bread-slice",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bridge",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bridge-circle-check",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bridge-circle-exclamation",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    },
+    {
+        "key": "fa-bridge-circle-xmark",
+        "types": [
+            "solid",
+            "regular"
+        ]
+    }
+]
+}
