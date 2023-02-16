@@ -11,13 +11,27 @@ namespace Directorist\Rest_Api\Controllers\Version1;
 defined( 'ABSPATH' ) || exit;
 
 use WP_Error;
+use WP_Query;
 use WP_User_Query;
 use WP_REST_Server;
+use Directorist\Background_Task_Runner;
+use Directorist\Helper;
 
 /**
  * Users controller class.
  */
 class Users_Controller extends Abstract_Controller {
+
+	public $background_task_runner;
+
+	public function __construct() {
+		parent::__construct();
+		add_action( 'init', [ $this, 'init_background_process' ] );
+	}
+
+	public function init_background_process() {
+		$this->background_task_runner = new Background_Task_Runner();
+	}
 
 	/**
 	 * Route base.
@@ -97,6 +111,11 @@ class Users_Controller extends Abstract_Controller {
 						'default'     => 0,
 						'type'        => 'integer',
 						'description' => __( 'ID to reassign posts to.', 'directorist' ),
+					),
+					'delete_user_contents' => array(
+						'default'     => true,
+						'type'        => 'boolean',
+						'description' => __( 'If set as true, then the user contents will remove.', 'directorist' ),
 					),
 				),
 			),
@@ -495,6 +514,17 @@ class Users_Controller extends Abstract_Controller {
 		$request->set_param( 'context', 'edit' );
 		$response = $this->prepare_item_for_response( $user_data, $request );
 
+		if ( ! empty( $request['delete_user_contents'] ) ) {
+
+			update_user_meta( $id, '_directorist_lock_access', true );
+
+			$this->background_task_runner->push_to_queue( [ self::class, 'background_task_delete_user_content', $id ] );
+			$this->background_task_runner->save()->dispatch();
+
+			$response->set_status( 201 );
+			return $response;
+		}
+
 		/** Include admin user functions to get access to wp_delete_user() */
 		require_once ABSPATH . 'wp-admin/includes/user.php';
 
@@ -518,6 +548,38 @@ class Users_Controller extends Abstract_Controller {
 		do_action( 'directorist_rest_delete_user', $user_data, $response, $request );
 
 		return $response;
+	}
+
+	public static function background_task_delete_user_content( $user_id ) {
+		$user_data = get_userdata( $user_id );
+
+		if ( ! $user_data ) {
+			return false;
+		}
+
+		$user_listings = new WP_Query([
+			'post_type'      => ATBDP_POST_TYPE,
+			'post_status'    => 'any',
+			'posts_per_page' => 50,
+			'orderby'        => 'publish_date',
+			'order'          => 'ASC',
+			'author__in'     => $user_id,
+		]);
+
+		if ( ! $user_listings->have_posts() ) {
+			/** Include admin user functions to get access to wp_delete_user() */
+			require_once ABSPATH . 'wp-admin/includes/user.php';
+			wp_delete_user( $user_id );
+
+			return false;
+		}
+
+		foreach ( $user_listings->posts as $post ) {
+			Helper::delete_listings_images( $post->ID );
+			wp_delete_post( $post->ID, true );
+		}
+
+		return true;
 	}
 
 	/**

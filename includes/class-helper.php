@@ -812,4 +812,43 @@ class Helper {
 		return $query_strings;
 	}
 
+	/**
+	 * Delete Listing's Images
+	 *
+	 * @param int $listing_id
+	 * @return void
+	 */
+	public static function delete_listings_images( $listing_id ) {
+		$listings_images = self::get_listings_image_ids( $listing_id );
+
+		if ( empty( $listings_images ) ) {
+			return;
+		}
+
+		foreach( $listings_images as $attachment_id ) {
+			wp_delete_attachment( (int) $attachment_id, true );
+		}
+
+		delete_post_meta( $listing_id, '_listing_img' );
+		delete_post_meta( $listing_id, '_listing_prv_img' );
+	}
+
+	/**
+	 * Get Listings Image IDs
+	 *
+	 * @param int $listing_id
+	 * @return array Listing's Image IDs
+	 */
+	public static function get_listings_image_ids( $listing_id ) {
+		$listings_images         = get_post_meta( $listing_id, '_listing_img', true );
+		$listings_images         = ( ! empty( $listings_images ) && is_array( $listings_images ) ) ? $listings_images : [];
+		$listings_featured_image = get_post_meta( $listing_id, '_listing_prv_img', true );
+
+		if ( ! empty( $listings_featured_image ) && is_numeric( $listings_featured_image ) ) {
+			$listings_images[] = $listings_featured_image;
+		}
+
+		return array_values( $listings_images );
+	}
+
 }

@@ -60,6 +60,10 @@ abstract class Abstract_Controller extends WP_REST_Controller {
 	 */
 	private $_request = null;
 
+	public function __construct() {
+        add_action( 'rest_api_init', [ $this, 'register_routes' ] );
+    }
+
 	/**
 	 * Add the schema from additional fields to an schema array.
 	 *
