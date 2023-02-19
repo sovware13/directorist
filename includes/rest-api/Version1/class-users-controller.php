@@ -14,8 +14,8 @@ use WP_Error;
 use WP_Query;
 use WP_User_Query;
 use WP_REST_Server;
+use Directorist\Background_Tasks\Delete_User_Contents;
 use Directorist\Background_Task_Runner;
-use Directorist\Helper;
 
 /**
  * Users controller class.
@@ -31,6 +31,7 @@ class Users_Controller extends Abstract_Controller {
 
 	public function init_background_process() {
 		$this->background_task_runner = new Background_Task_Runner();
+		$this->background_task_runner->set_action( 'directorist_background_task_runner_for_user_content_deletion' );
 	}
 
 	/**
@@ -518,7 +519,7 @@ class Users_Controller extends Abstract_Controller {
 
 			update_user_meta( $id, '_directorist_lock_access', true );
 
-			$this->background_task_runner->push_to_queue( [ self::class, 'background_task_delete_user_content', $id ] );
+			$this->background_task_runner->push_to_queue( [ Delete_User_Contents::class, 'delete_user_contents', $id ] );
 			$this->background_task_runner->save()->dispatch();
 
 			$response->set_status( 201 );
@@ -548,38 +549,6 @@ class Users_Controller extends Abstract_Controller {
 		do_action( 'directorist_rest_delete_user', $user_data, $response, $request );
 
 		return $response;
-	}
-
-	public static function background_task_delete_user_content( $user_id ) {
-		$user_data = get_userdata( $user_id );
-
-		if ( ! $user_data ) {
-			return false;
-		}
-
-		$user_listings = new WP_Query([
-			'post_type'      => ATBDP_POST_TYPE,
-			'post_status'    => 'any',
-			'posts_per_page' => 50,
-			'orderby'        => 'publish_date',
-			'order'          => 'ASC',
-			'author__in'     => $user_id,
-		]);
-
-		if ( ! $user_listings->have_posts() ) {
-			/** Include admin user functions to get access to wp_delete_user() */
-			require_once ABSPATH . 'wp-admin/includes/user.php';
-			wp_delete_user( $user_id );
-
-			return false;
-		}
-
-		foreach ( $user_listings->posts as $post ) {
-			Helper::delete_listings_images( $post->ID );
-			wp_delete_post( $post->ID, true );
-		}
-
-		return true;
 	}
 
 	/**

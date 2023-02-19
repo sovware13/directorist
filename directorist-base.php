@@ -449,6 +449,7 @@ final class Directorist_Base
 			ATBDP_INC_DIR . 'rest-api/init',
 		]);
 
+		$this->autoload( ATBDP_INC_DIR . 'background-tasks/' );
 		$this->autoload( ATBDP_INC_DIR . 'database/' );
 
 		load_dependencies('all', ATBDP_INC_DIR . 'data-store/');

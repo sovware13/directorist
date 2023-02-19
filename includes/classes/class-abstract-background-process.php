@@ -29,6 +29,15 @@ if ( ! class_exists( 'WP_Background_Process', false ) ) {
 abstract class Background_Process extends \WP_Background_Process {
 
 	/**
+	 * Set Action.
+	 *
+	 * @return bool
+	 */
+	public function set_action( $action ) {
+		$this->action = $action;
+	}
+
+	/**
 	 * Is queue empty.
 	 *
 	 * @return bool
