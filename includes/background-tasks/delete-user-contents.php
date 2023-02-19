@@ -22,8 +22,8 @@ class Delete_User_Contents {
 
 		$data_list = [
 			'listings' => [
-				'data'            => self::get_listings( $user_id ),
-				'delete_callback' => [ self::class, 'delete_listings' ],
+				'data'     => self::get_listings( $user_id ),
+				'callback' => [ self::class, 'delete_listings' ],
 			],
 		];
 
@@ -33,7 +33,7 @@ class Delete_User_Contents {
 
 			if ( ! empty( $data_item['data'] ) ) {
 				$has_no_data = false;
-				call_user_func( $data_item['delete_callback'], $data_item['data'] );
+				call_user_func( $data_item['callback'], $data_item['data'] );
 			}
 
 		}
