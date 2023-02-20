@@ -21,12 +21,12 @@ class Delete_User_Contents {
 			'listings' => [
 				'has_data' => self::has_posts( $user_id, ATBDP_POST_TYPE ),
 				'callback' => [ self::class, 'delete_posts' ],
-				'args'     => [  $user_id, ATBDP_POST_TYPE ],
+				'args'     => [ $user_id, ATBDP_POST_TYPE ],
 			],
 			'attachments' => [
 				'has_data' => self::has_posts( $user_id, 'attachment' ),
 				'callback' => [ self::class, 'delete_posts' ],
-				'args'     => [  $user_id, 'attachment' ],
+				'args'     => [ $user_id, 'attachment' ],
 			],
 		];
 
