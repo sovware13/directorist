@@ -11,7 +11,6 @@ namespace Directorist\Rest_Api\Controllers\Version1;
 defined( 'ABSPATH' ) || exit;
 
 use WP_Error;
-use WP_Query;
 use WP_User_Query;
 use WP_REST_Server;
 use Directorist\Background_Tasks\Delete_User_Contents;
