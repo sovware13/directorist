@@ -2,8 +2,6 @@
 
 namespace Directorist\Background_Tasks;
 
-use Directorist\Helper;
-
 class Delete_User_Contents {
 
 	/**
