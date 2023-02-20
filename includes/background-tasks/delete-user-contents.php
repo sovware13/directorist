@@ -52,7 +52,7 @@ class Delete_User_Contents {
 	}
 
 	/**
-	 * Check If Has Listings
+	 * Check If Has Posts
 	 *
 	 * @param int $user_id
 	 * @param string $post_type
