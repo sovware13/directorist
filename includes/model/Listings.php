@@ -229,7 +229,6 @@ class Directorist_Listings {
 		$this->options['default_preview_image']           = get_directorist_option('default_preview_image', DIRECTORIST_ASSETS . 'images/grid.jpg');
 		$this->options['font_type']                       = 'line';
 		$this->options['display_publish_date']            = get_directorist_option('display_publish_date', 1) ? true : false;
-		$this->options['publish_date_format']             = get_directorist_option('publish_date_format', 'time_ago');
 		$this->options['default_latitude']                = get_directorist_option('default_latitude', 40.7127753);
 		$this->options['default_longitude']               = get_directorist_option('default_longitude', -74.0059728);
 		$this->options['listing_instant_search']         = ! empty( get_directorist_option( 'listing_instant_search' ) ) ? 'yes' : '';
@@ -434,19 +433,19 @@ class Directorist_Listings {
 		$icon_full_star  = directorist_icon( 'fas fa-star', false, 'star-full' );
 
 		// Stars
-		$star_1 = ( $average >= 0.5 && $average < 1) ? $icon_half_star : $icon_empty_star;
+		$star_1 = ( $average > 0 && $average < 1) ? $icon_half_star : $icon_empty_star;
 		$star_1 = ( $average >= 1) ? $icon_full_star : $star_1;
 
-		$star_2 = ( $average >= 1.5 && $average < 2) ? $icon_half_star : $icon_empty_star;
+		$star_2 = ( $average > 1 && $average < 2) ? $icon_half_star : $icon_empty_star;
 		$star_2 = ( $average >= 2) ? $icon_full_star : $star_2;
 
-		$star_3 = ( $average >= 2.5 && $average < 3) ? $icon_half_star : $icon_empty_star;
+		$star_3 = ( $average > 2 && $average < 3) ? $icon_half_star : $icon_empty_star;
 		$star_3 = ( $average >= 3) ? $icon_full_star : $star_3;
 
-		$star_4 = ( $average >= 3.5 && $average < 4) ? $icon_half_star : $icon_empty_star;
+		$star_4 = ( $average > 3 && $average < 4) ? $icon_half_star : $icon_empty_star;
 		$star_4 = ( $average >= 4) ? $icon_full_star : $star_4;
 
-		$star_5 = ( $average >= 4.5 && $average < 5 ) ? $icon_half_star : $icon_empty_star;
+		$star_5 = ( $average > 4 && $average < 5 ) ? $icon_half_star : $icon_empty_star;
 		$star_5 = ( $average >= 5 ) ? $icon_full_star : $star_5;
 
 		$review_stars = "{$star_1}{$star_2}{$star_3}{$star_4}{$star_5}";
