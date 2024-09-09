@@ -302,7 +302,7 @@ if ( ! class_exists( 'ATBDP_Add_Listing' ) ) :
 				}
 
 				$listing_create_status = directorist_get_listing_create_status( $directory_id );
-				$listing_edit_status   = directorist_get_listing_edit_status( $directory_id );
+				$listing_edit_status   = ( 'publish' !== $listing_create_status ) ? $listing_create_status : directorist_get_listing_edit_status( $directory_id );
 				$default_expiration    = directorist_get_default_expiration( $directory_id );
 				$preview_enable        = atbdp_is_truthy( get_term_meta( $directory_id, 'preview_mode', true ) );
 
@@ -409,11 +409,11 @@ if ( ! class_exists( 'ATBDP_Add_Listing' ) ) :
 				if ( 'view_listing' === $redirect_page ) {
 					$redirect_url = $permalink;
 				} else {
-					$redirect_url = ATBDP_Permalink::get_dashboard_page_link();
+					$redirect_url = add_query_arg( 'listing_id', $listing_id, ATBDP_Permalink::get_dashboard_page_link() );
 				}
 
 				if ( (bool) get_directorist_option( 'submission_confirmation', 1 ) ) {
-					$redirect_url = add_query_arg( 'notice', true, $redirect_url );
+					$redirect_url = urlencode( add_query_arg( 'notice', true, $redirect_url ) );
 				}
 
 				$data['redirect_url'] = $redirect_url;
@@ -444,9 +444,7 @@ if ( ! class_exists( 'ATBDP_Add_Listing' ) ) :
 					$data['success_msg'] = __( 'Payment required! Redirecting to checkout...', 'directorist' );
 				}
 
-				if ( $preview_enable ) {
-					$data['preview_mode'] = true;
-				}
+				$data['preview_mode'] = $preview_enable;
 
 				if ( ! empty( $posted_data['listing_id'] ) ) {
 					$data['edited_listing'] = true;

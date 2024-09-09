@@ -573,7 +573,11 @@ window.addEventListener('DOMContentLoaded', function () {
           behavior: 'smooth'
         });
       } else {
+<<<<<<< HEAD
         location.href = href;
+=======
+        location.href = $(this).attr('href');
+>>>>>>> 143a8cee6a021912c7629328881c6d3503e5ff1b
       }
     });
 
