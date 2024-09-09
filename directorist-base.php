@@ -189,10 +189,6 @@ final class Directorist_Base
 			add_action('plugins_loaded', array(self::$instance, 'add_polylang_swicher_support') );
 			add_action('widgets_init', array(self::$instance, 'register_widgets'));
 			add_action('after_setup_theme', array(self::$instance, 'add_image_sizes'));
-<<<<<<< HEAD
-
-=======
->>>>>>> 143a8cee6a021912c7629328881c6d3503e5ff1b
 			add_action( 'template_redirect', [ self::$instance, 'check_single_listing_page_restrictions' ] );
 			add_action( 'atbdp_show_flush_messages', [ self::$instance, 'show_flush_messages' ] );
 
@@ -276,10 +272,7 @@ final class Directorist_Base
 			new ATBDP_Upgrade();
 			// add uninstall menu
 			add_filter('atbdp_settings_menus', array(self::$instance, 'add_uninstall_menu'));
-<<<<<<< HEAD
-=======
 			add_filter( 'display_post_states', array(self::$instance, 'add_page_states'), 10, 2 );
->>>>>>> 143a8cee6a021912c7629328881c6d3503e5ff1b
 
 			self::init_hooks();
 
@@ -337,16 +330,6 @@ final class Directorist_Base
 
 	// check_single_listing_page_restrictions
 	public function check_single_listing_page_restrictions() {
-<<<<<<< HEAD
-		$restricted_for_logged_in_user = get_directorist_option( 'restrict_single_listing_for_logged_in_user', false );
-		$current_user_id = get_current_user_id();
-
-		if ( is_singular( ATBDP_POST_TYPE ) && ! empty( $restricted_for_logged_in_user ) && empty( $current_user_id ) ) {
-
-			atbdp_auth_guard();
-			die;
-		}
-=======
 		if ( is_user_logged_in() || ! is_singular( ATBDP_POST_TYPE ) ) {
 			return;
 		}
@@ -357,7 +340,6 @@ final class Directorist_Base
 		}
 
 		atbdp_auth_guard();
->>>>>>> 143a8cee6a021912c7629328881c6d3503e5ff1b
 	}
 
 	// add_polylang_swicher_support
@@ -480,10 +462,6 @@ final class Directorist_Base
 			ATBDP_INC_DIR . 'custom-filters',
 			ATBDP_INC_DIR . 'elementor/init',
 			ATBDP_INC_DIR . 'system-status/class-system-status',
-<<<<<<< HEAD
-			ATBDP_INC_DIR . 'gutenberg/init',
-=======
->>>>>>> 143a8cee6a021912c7629328881c6d3503e5ff1b
 			ATBDP_INC_DIR . 'review/init',
 			ATBDP_INC_DIR . 'rest-api/init',
 			ATBDP_INC_DIR . 'fields/init',
@@ -491,10 +469,7 @@ final class Directorist_Base
 			ATBDP_INC_DIR . 'modules/multi-directory-setup/trait-multi-directory-helper',
 			ATBDP_INC_DIR . 'modules/multi-directory-setup/class-multi-directory-migration',
 			ATBDP_INC_DIR . 'modules/multi-directory-setup/class-multi-directory-manager',
-<<<<<<< HEAD
-=======
 			__DIR__ . '/blocks/init',
->>>>>>> 143a8cee6a021912c7629328881c6d3503e5ff1b
 		]);
 
 		$this->autoload( ATBDP_INC_DIR . 'database/' );
@@ -627,8 +602,6 @@ final class Directorist_Base
 		}
 	}
 
-<<<<<<< HEAD
-=======
 	/**
 	* Add a post display state for special Directorist pages in the page list table.
 	*
@@ -692,7 +665,6 @@ final class Directorist_Base
 	   return $post_states;
    }
 
->>>>>>> 143a8cee6a021912c7629328881c6d3503e5ff1b
 	public function add_uninstall_menu($menus) {
 		$menus['uninstall_menu'] = array(
 			'title' => __('Uninstall', 'directorist'),

@@ -13,12 +13,7 @@ jQuery(($) => {
             processData: false,
             cache: false,
             success: function ( response ) {
-<<<<<<< HEAD
-                console.log( response );
-                if( response.success ) {
-=======
                 if ( response.success ) {
->>>>>>> 143a8cee6a021912c7629328881c6d3503e5ff1b
                     $('.directorist-register-error').hide();
                     if( response.data.redirect_url ) {
                         if( response.data.redirect_message ) {

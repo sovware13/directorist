@@ -49,10 +49,6 @@
 
         $('form#login .status').on('click', 'a', function(e) {
             e.preventDefault();
-<<<<<<< HEAD
-=======
-
->>>>>>> 143a8cee6a021912c7629328881c6d3503e5ff1b
             if ( $(this).attr('href') === '#atbdp_recovery_pass' ) {
                 $("#recover-pass-modal").slideDown().show();
                 window.scrollTo({
@@ -60,11 +56,7 @@
                     behavior: 'smooth',
                 });
             } else {
-<<<<<<< HEAD
-                location.href = href;
-=======
                 location.href = $(this).attr('href');
->>>>>>> 143a8cee6a021912c7629328881c6d3503e5ff1b
             }
         })
 
